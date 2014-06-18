@@ -10,11 +10,38 @@ Author URI: http://www.bellevuecollege.edu
 
 require_once("alert-config.php");
 
+
 /*
  * Putting the College open message functionality to run outside of cron job
  * */
 
 $new_data = getOpenMsg();
+
+add_action( 'init', 'test_start_buffer', 0, 0 );
+
+function test_start_buffer(){
+    ob_start( 'test_get_buffer' );
+}
+
+function test_get_buffer( $buffer){
+
+    $rave_message = get_site_option('ravealert_currentMsg');
+    $rave_class = get_site_option('ravealert_classCurrentMsg');
+    if($rave_message!="")
+    {
+        $rave_html = '<div id="alertmessage" class="'.$rave_class.'">'.$rave_message.'</div>';
+        preg_match('#<body.+>#',$buffer,$matches);
+        if(isset($matches[0]) && !empty($matches[0]))
+        {
+            error_log("matched ele :".$matches[0]);
+            $concat_html = $matches[0].$rave_html;//Appending the rave alert message right after the start of body tag.
+            return preg_replace( '#<body.+>#', $concat_html, $buffer);
+        }
+    }
+    return $buffer;
+
+}
+
 
 function getOpenMsg()
 {
@@ -30,7 +57,7 @@ function getOpenMsg()
         {
             if($open_message)
             {
-                $html = "<div class='alert alert-success'>".$open_message."</div>";
+                //$html = "<div class='alert alert-success'>".$open_message."</div>";
                 $returnArray["description"] = $open_message;
                 $returnArray["class"] = "alert alert-success";
             }
@@ -39,14 +66,14 @@ function getOpenMsg()
                 $returnArray["description"] = "";
                 $returnArray["class"] = "";
             }
-            $new_display_message = trim($returnArray["class"]);
+            $new_display_message = trim($returnArray["description"]);
             $class =  trim($returnArray["class"]);
             updateCurrentMsg($new_display_message,$class);
         }
     }
 
     return $returnArray;
-}
+}// End of getOpenMsg function
 
 /*
 	Cron Job for RaveAlert.
@@ -103,7 +130,7 @@ function cap_parse($url){
         return $returnArray;
 
     }
-}
+} //End of cap_parse function
 
 
 function returnHtmlNClearCache($new_data)
@@ -129,7 +156,7 @@ function returnHtmlNClearCache($new_data)
     {
         add_site_option( "ravealert_classCurrentMsg", "" );
     }
-    $clearCacheCommand = $network_settings['ravealert_clearCacheCommand'];//error_log("clear cache command:".$clearCacheCommand);"sudo find /var/run/nginx-cache-bc -type f -exec rm {} \;";
+    $clearCacheCommand = $network_settings['ravealert_clearCacheCommand'];
     $clearCacheCommand = base64_decode($clearCacheCommand);
     $new_display_message = !empty($new_data["description"]) ? trim($new_data["description"]) : "";
 
@@ -140,18 +167,11 @@ function returnHtmlNClearCache($new_data)
         if($clearCacheCommand)
         {
             $returnValue= returnContentsOfUrl($clearCacheCommand);
-            //error_log("clearing cache return value :".$returnValue);
-            //var_dump($returnValue);
             if($returnValue)
             {
-                //var_dump("==============================Inside if conditions");
                 $returnJsonDecodedString = json_decode($returnValue,true);
-                //error_log("returnJsonDecodedString :".print_r($returnJsonDecodedString,true));
-                //var_dump($returnJsonDecodedString);
                 foreach($returnJsonDecodedString as $key=>$value)
                 {
-                    //var_dump("inside for loop:".$value);
-                    //$key will be the server name
                     if($value["return_value"] != 0)
                     {
                         error_log("\n"."Error: Server ".$key." returns ".$value["return_value"]." while running command ".$value["command_run"]."\n");
@@ -169,7 +189,7 @@ function returnHtmlNClearCache($new_data)
     updateCurrentMsg($new_display_message,$class);
 
     return $html;
-}
+}// end of returnHtmlNClearCache function
 function returnContentsOfUrl($url)
 {
     $arg = array ( 'method' => 'GET');
