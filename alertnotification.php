@@ -22,7 +22,9 @@ add_action( 'init', 'test_start_buffer', 0, 0 );
 function test_start_buffer(){
     ob_start( 'test_get_buffer' );
 }
-
+/*
+ * Appends rave alert current message to the start of body tag.
+ */
 function test_get_buffer( $buffer){
 
     $rave_message = get_site_option('ravealert_currentMsg');
@@ -41,7 +43,9 @@ function test_get_buffer( $buffer){
     return $buffer;
 
 }
-
+/*
+ * Updates the current message if xml feed description is empty and high alert flag is set to true
+ */
 
 function getOpenMsg()
 {
@@ -57,7 +61,6 @@ function getOpenMsg()
         {
             if($open_message)
             {
-                //$html = "<div class='alert alert-success'>".$open_message."</div>";
                 $returnArray["description"] = $open_message;
                 $returnArray["class"] = "alert alert-success";
             }
@@ -108,7 +111,9 @@ function myCronFunction()
     $new_data = cap_parse($url);
     $getHtml = returnHtmlNClearCache($new_data);
 }
-
+/*
+ * Parses the xml feed through CAP
+ */
 function cap_parse($url){
 
     //Load XML File and get values
@@ -132,20 +137,19 @@ function cap_parse($url){
     }
 } //End of cap_parse function
 
-
+/*
+ *  Updates current message and clear cache
+ */
 function returnHtmlNClearCache($new_data)
 {
     $html = "";
     $class = "";//Class for the display message
-    error_log("new data :".print_r($new_data,true));
     if(!empty($new_data["description"]))
     {
         $class = $new_data["class"];
         $html = "<div id='alertmessage' class='".$new_data["class"]."'>".$new_data["description"]."</div>";
     }
     $network_settings = get_site_option( 'ravealert_network_settings' );
-    //error_log("network_settings:".print_r($network_settings,true));
-    $high_alert = $network_settings['high_alert'];
     $currentMsg = get_site_option('ravealert_currentMsg');
     $classForMsg = get_site_option('ravealert_classCurrentMsg');
     if(!$currentMsg)
@@ -194,10 +198,11 @@ function returnContentsOfUrl($url)
 {
     $arg = array ( 'method' => 'GET');
     $output = wp_remote_request ( $url , $arg );
-    //error_log("output :".print_r($output["body"],true));
     return $output["body"];
 }
-
+/*
+ * Update current message
+ */
 function updateCurrentMsg($new_display_message,$class)
 {
     update_site_option("ravealert_currentMsg", $new_display_message);

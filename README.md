@@ -19,6 +19,8 @@ College Open Message
 XML Feed URL
 Clear Cache Url
 
+The settings will be network wide.
+
 
 == Installation ==
 1. Download plugin files from https://github.com/BellevueCollege/rave-alert-notification.

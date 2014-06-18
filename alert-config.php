@@ -3,7 +3,7 @@
 /*
  * Will add network wide settings for Rave Alert.
  */
-//add_action('network_admin_menu', 'function_name');
+
 add_action( 'network_admin_menu', 'ravealert_network_menu_settings');
 
 function ravealert_network_menu_settings(){
@@ -32,7 +32,6 @@ if (is_multisite() && current_user_can('manage_network'))  {
         //store option values in a variable
         $network_settings = $_POST['network_settings'];
         $cacheCommand = $network_settings["ravealert_clearCacheCommand"];
-        //error_log("clear cache com :".$cacheCommand);
         $cacheCommand = stripslashes($cacheCommand);
         $cacheCommand = base64_encode($cacheCommand);
         $network_settings["ravealert_clearCacheCommand"] = $cacheCommand;
@@ -71,7 +70,6 @@ if (is_multisite() && current_user_can('manage_network'))  {
         $ravealert_clearCacheCommand = base64_decode($network_settings['ravealert_clearCacheCommand']);
         $ravealert_college_openmessage = $network_settings['ravealert_college_openmessage'];
         $ravealert_xml_feedurl = $network_settings['ravealert_xml_feedurl'];
-        //error_log("reavealert current msg :".$ravealert_currentMsg);
 
         wp_nonce_field('save_network_settings', 'my-network-plugin');
         ?>
