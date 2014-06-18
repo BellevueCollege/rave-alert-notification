@@ -20,6 +20,8 @@ XML Feed URL
 Clear Cache Url
 
 The settings will be network wide.
+Plugin uses Twitter Bootstrap. Here is the url:
+http://getbootstrap.com/css/
 
 
 == Installation ==
