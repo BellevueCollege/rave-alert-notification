@@ -71,6 +71,14 @@ function getOpenMsg()
             }
             $new_display_message = trim($returnArray["description"]);
             $class =  trim($returnArray["class"]);
+            //Clear the cache if there is a new message
+            $check = compareCurrentNewMessage($new_display_message);
+            if($check)
+            {
+                $cache_cleared = clearCache();
+                if(!$cache_cleared)
+                    error_log("ERROR: CACHE IS NOT BEING CLEARED");
+            }
             updateCurrentMsg($new_display_message,$class);
         }
     }
@@ -149,9 +157,58 @@ function returnHtmlNClearCache($new_data)
         $class = $new_data["class"];
         $html = "<div id='alertmessage' class='".$new_data["class"]."'>".$new_data["description"]."</div>";
     }
+    $new_display_message = !empty($new_data["description"]) ? trim($new_data["description"]) : "";
+
+//Clear the cache if there is a new message
+    $check = compareCurrentNewMessage($new_display_message);
+    if($check)
+    {
+        $cache_cleared = clearCache();
+        if(!$cache_cleared)
+            error_log("ERROR: CACHE IS NOT BEING CLEARED");
+    }
+    //Updated the new message and the class variable in the database
+    updateCurrentMsg($new_display_message,$class);
+
+    return $html;
+}// end of returnHtmlNClearCache function
+
+function clearCache()
+{
     $network_settings = get_site_option( 'ravealert_network_settings' );
+    $clearCacheCommand = $network_settings['ravealert_clearCacheCommand'];
+    $clearCacheCommand = base64_decode($clearCacheCommand);
+    if($clearCacheCommand)
+    {
+        $returnValue= returnContentsOfUrl($clearCacheCommand);
+        if($returnValue)
+        {
+            $returnJsonDecodedString = json_decode($returnValue,true);
+            foreach($returnJsonDecodedString as $key=>$value)
+            {
+                if($value["return_value"] != 0)
+                {
+                    error_log("\n"."Error: Server ".$key." returns ".$value["return_value"]." while running command ".$value["command_run"]."\n");
+                    return false;
+                }
+                else
+                {
+                    //error_log("\n"." Success: Server ".$key." returns ".$value["return_value"]." while running command ".$value["command_run"]."\n");
+                    return true;
+                }
+            }
+
+        }
+    }
+    return false;
+}
+
+function compareCurrentNewMessage($new_message)
+{
     $currentMsg = get_site_option('ravealert_currentMsg');
+
     $classForMsg = get_site_option('ravealert_classCurrentMsg');
+    error_log("current :".$currentMsg."     class:".$classForMsg);
     if(!$currentMsg)
     {
         add_site_option( "ravealert_currentMsg", "" );
@@ -160,40 +217,12 @@ function returnHtmlNClearCache($new_data)
     {
         add_site_option( "ravealert_classCurrentMsg", "" );
     }
-    $clearCacheCommand = $network_settings['ravealert_clearCacheCommand'];
-    $clearCacheCommand = base64_decode($clearCacheCommand);
-    $new_display_message = !empty($new_data["description"]) ? trim($new_data["description"]) : "";
-
-//Clear the cache if there is a new message
-
-    if($currentMsg != $new_display_message)
+    if($currentMsg != $new_message)
     {
-        if($clearCacheCommand)
-        {
-            $returnValue= returnContentsOfUrl($clearCacheCommand);
-            if($returnValue)
-            {
-                $returnJsonDecodedString = json_decode($returnValue,true);
-                foreach($returnJsonDecodedString as $key=>$value)
-                {
-                    if($value["return_value"] != 0)
-                    {
-                        error_log("\n"."Error: Server ".$key." returns ".$value["return_value"]." while running command ".$value["command_run"]."\n");
-                    }
-                    else
-                    {
-                        //error_log("\n"." Success: Server ".$key." returns ".$value["return_value"]." while running command ".$value["command_run"]."\n");
-                    }
-                }
-
-            }
-        }
+        return true;
     }
-    //Updated the new message and the class variable in the database
-    updateCurrentMsg($new_display_message,$class);
-
-    return $html;
-}// end of returnHtmlNClearCache function
+    return false;
+}
 function returnContentsOfUrl($url)
 {
     $arg = array ( 'method' => 'GET');
