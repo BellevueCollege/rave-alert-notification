@@ -2,7 +2,7 @@
 /*
 Plugin Name: Rave Alert Notification
 Plugin URI: https://github.com/BellevueCollege/rave-alert-notification
-Description: Sends Rave Alert notification for Bellevue College Home page.
+Description: Sends Rave Alert notification to Bellevue College WordPress sites.
 Author: Bellevue College Technology Development and Communications
 Version: 0.1
 Author URI: http://www.bellevuecollege.edu
@@ -31,17 +31,29 @@ function test_get_buffer( $buffer){
     $rave_class = get_site_option('ravealert_classCurrentMsg');
     if($rave_message!="")
     {
-        $rave_html = '<div id="alertmessage" class="'.$rave_class.'">'.$rave_message.'</div>';
+        $rave_html = "<div class='container'>
+                        <div class='row'>
+                             <div class='span12 top-spacing30'>
+                                  <div id='alertmessage' class='".$rave_class."'>".$rave_message."
+                                  </div>
+                             </div>
+                        </div>
+                    </div>
+                      ";
         preg_match('#<body.+>#',$buffer,$matches);
         if(isset($matches[0]) && !empty($matches[0]))
         {
             error_log("matched ele :".$matches[0]);
             $concat_html = $matches[0].$rave_html;//Appending the rave alert message right after the start of body tag.
-            return preg_replace( '#<body.+>#', $concat_html, $buffer);
+            if ( ! is_admin() && ! is_login_page())
+                return preg_replace( '#<body.+>#', $concat_html, $buffer);
         }
     }
     return $buffer;
 
+}
+function is_login_page() {
+    return in_array($GLOBALS['pagenow'], array('wp-login.php', 'wp-register.php'));
 }
 /*
  * Updates the current message if xml feed description is empty and high alert flag is set to true
@@ -128,6 +140,8 @@ function cap_parse($url){
     $xml = simplexml_load_file($url);
     $event = $xml->info->event;
     $description=$xml->info->description;
+    $headline =$xml->info->headline;
+    $event = $xml->info->event;
     $effective=strtotime($xml->info->effective);
     $expires=strtotime($xml->info->expires);
 
@@ -139,7 +153,8 @@ function cap_parse($url){
         //If true, print HTML using event and description info
         $returnArray["description"] = $description;
         $returnArray["class"] = "alert alert-error";
-        //return "<div id=\"alert\"><h2>".$event."</h2><p>".$description."</p></div>";
+        $returnArray["headline"] = $headline;
+        $returnArray["event"] = $event;
         return $returnArray;
 
     }
@@ -155,9 +170,18 @@ function returnHtmlNClearCache($new_data)
     if(!empty($new_data["description"]))
     {
         $class = $new_data["class"];
-        $html = "<div id='alertmessage' class='".$new_data["class"]."'>".$new_data["description"]."</div>";
+        $html = "<div class='container'>
+                    <div class='row'>
+                     <div class='span12 top-spacing30'>
+                        <div id='alertmessage' class='".$new_data["class"]."' >
+                        <h1>".$new_data["event"]."</h1>
+                        <p>".$new_data["headline"]."</p>
+                        <p>".$new_data["description"]."</p></div>
+                      </div>
+                    </div>
+                 </div>";
     }
-    $new_display_message = !empty($new_data["description"]) ? trim($new_data["description"]) : "";
+    $new_display_message = !empty($new_data["event"]) ?  "<h3>".$new_data["event"]."</h3><p>".$new_data["headline"]."</p><p>".$new_data["description"]."</p>" : "";
 
 //Clear the cache if there is a new message
     $check = compareCurrentNewMessage($new_display_message);
@@ -206,7 +230,6 @@ function clearCache()
 function compareCurrentNewMessage($new_message)
 {
     $currentMsg = get_site_option('ravealert_currentMsg');
-
     $classForMsg = get_site_option('ravealert_classCurrentMsg');
     error_log("current :".$currentMsg."     class:".$classForMsg);
     if(!$currentMsg)
