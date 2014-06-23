@@ -4,7 +4,7 @@ Plugin Name: Rave Alert Notification
 Plugin URI: https://github.com/BellevueCollege/rave-alert-notification
 Description: Sends Rave Alert notification to Bellevue College WordPress sites.
 Author: Bellevue College Technology Development and Communications
-Version: 0.1
+Version: 0.0.0.1
 Author URI: http://www.bellevuecollege.edu
 */
 
@@ -43,7 +43,6 @@ function test_get_buffer( $buffer){
         preg_match('#<body.+>#',$buffer,$matches);
         if(isset($matches[0]) && !empty($matches[0]))
         {
-            error_log("matched ele :".$matches[0]);
             $concat_html = $matches[0].$rave_html;//Appending the rave alert message right after the start of body tag.
             if ( ! is_admin() && ! is_login_page())
                 return preg_replace( '#<body.+>#', $concat_html, $buffer);
@@ -231,7 +230,6 @@ function compareCurrentNewMessage($new_message)
 {
     $currentMsg = get_site_option('ravealert_currentMsg');
     $classForMsg = get_site_option('ravealert_classCurrentMsg');
-    error_log("current :".$currentMsg."     class:".$classForMsg);
     if(!$currentMsg)
     {
         add_site_option( "ravealert_currentMsg", "" );
