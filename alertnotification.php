@@ -141,14 +141,15 @@ function cap_parse($url){
     $description=$xml->info->description;
     $headline =$xml->info->headline;
     $event = $xml->info->event;
-    $effective=strtotime($xml->info->effective);
+    $effective=strtotime($xml->info->effective); // No use for us since the expiration time is calculated basis on the sent time by CAP.
+    $sent = strtotime($xml->sent);
     $expires=strtotime($xml->info->expires);
 
     //Get current time
     $time = time();
     $returnArray = array();
     //Test to see if current time is between effective time and expire time
-    if (($time > $effective) && ($time < $expires)) {
+    if (($time > $sent) && ($time < $expires)) {
         //If true, print HTML using event and description info
         $returnArray["description"] = $description;
         $returnArray["class"] = "alert alert-error";
