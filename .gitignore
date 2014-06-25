@@ -1,0 +1,39 @@
+# Generally Igore
+.htaccess
+*.log
+*.iws
+workspace.xml
+tasks.xml
+
+# ==================
+# Windows detritus
+# ==================
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+# Icon?
+ehthumbs.db
+Thumbs.db
+.cache
+.project
+.settings
+.tmproj
+*.esproj
+nbproject
+
+# Dreamweaver added files
+_notes
+dwsync.xml

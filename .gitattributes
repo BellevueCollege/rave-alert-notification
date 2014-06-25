@@ -1,0 +1,20 @@
+*         text=auto
+
+# Text files that should have line endings normalized
+*.css     eol=lf
+*.htm     eol=lf
+*.html    eol=lf
+*.js      eol=lf
+*.md      eol=lf
+*.php     eol=lf
+*.po      eol=lf
+*.txt     eol=lf
+
+# Files that should be treated as binary
+*.eot     binary
+*.jpg     binary
+*.mo      binary
+*.png     binary
+*.svg     binary
+*.ttf     binary
+*.woff    binary
