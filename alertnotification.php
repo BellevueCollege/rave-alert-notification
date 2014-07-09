@@ -4,7 +4,7 @@ Plugin Name: Rave Alert Notification
 Plugin URI: https://github.com/BellevueCollege/rave-alert-notification
 Description: Sends Rave Alert notification to Bellevue College WordPress sites.
 Author: Bellevue College Technology Development and Communications
-Version: 1
+Version: 1.1
 Author URI: http://www.bellevuecollege.edu
 */
 
@@ -136,28 +136,31 @@ function myCronFunction()
 function cap_parse($url){
 
     //Load XML File and get values
-    $xml = simplexml_load_file($url);
-    $event = $xml->info->event;
-    $description=$xml->info->description;
-    $headline =$xml->info->headline;
-    $event = $xml->info->event;
-    $effective=strtotime($xml->info->effective); // No use for us since the expiration time is calculated basis on the sent time by CAP.
-    $sent = strtotime($xml->sent);
-    $expires=strtotime($xml->info->expires);
-
-    //Get current time
-    $time = time();
     $returnArray = array();
-    //Test to see if current time is between effective time and expire time
-    if (($time > $sent) && ($time < $expires)) {
-        //If true, print HTML using event and description info
-        $returnArray["description"] = $description;
-        $returnArray["class"] = "alert alert-error";
-        $returnArray["headline"] = $headline;
-        $returnArray["event"] = $event;
-        return $returnArray;
+    $xml = @simplexml_load_file($url);
+    if($xml)
+    {
+
+        $event = $xml->info->event;
+        $description=$xml->info->description;
+        $headline =$xml->info->headline;
+        $effective=strtotime($xml->info->effective); // No use for us since the expiration time is calculated basis on the sent time by CAP.
+        $sent = strtotime($xml->sent);
+        $expires=strtotime($xml->info->expires);
+
+        //Get current time
+        $time = time();
+        //Test to see if current time is between effective time and expire time
+        if (($time > $sent) && ($time < $expires)) {
+            //If true, print HTML using event and description info
+            $returnArray["description"] = $description;
+            $returnArray["class"] = "alert alert-error";
+            $returnArray["headline"] = $headline;
+            $returnArray["event"] = $event;
+        }
 
     }
+    return $returnArray;
 } //End of cap_parse function
 
 /*
