@@ -154,7 +154,7 @@ function cap_parse($url){
         if (($time > $sent) && ($time < $expires)) {
             //If true, print HTML using event and description info
             $returnArray["description"] = $description;
-            $returnArray["class"] = "alert alert-error";
+            $returnArray["class"] = "alert alert-danger alert-error";
             $returnArray["headline"] = $headline;
             $returnArray["event"] = $event;
         }
