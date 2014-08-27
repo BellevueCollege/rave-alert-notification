@@ -4,7 +4,7 @@ Plugin Name: Rave Alert Notification
 Plugin URI: https://github.com/BellevueCollege/rave-alert-notification
 Description: Sends Rave Alert notification to Bellevue College WordPress sites.
 Author: Bellevue College Technology Development and Communications
-Version: 1.1
+Version: 1.1.0.1
 Author URI: http://www.bellevuecollege.edu
 */
 
