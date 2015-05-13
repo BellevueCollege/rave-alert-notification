@@ -31,13 +31,10 @@ function test_get_buffer( $buffer){
     $rave_class = get_site_option('ravealert_classCurrentMsg');
     if($rave_message!="")
     {
-        $rave_html = "<div class='container'>
+        $rave_html = "<div id='ravealertheader' class='container ".$rave_class."''>
                         <div class='row'>
-                             <div class='span12 top-spacing30'>
-                                  <div id='alertmessage' class='".$rave_class."'>".$rave_message."
-                                  </div>
-                             </div>
-                        </div>
+                            ".$rave_message."
+	                    </div>
                     </div>
                       ";
         preg_match('#<body.+>#',$buffer,$matches);
@@ -154,7 +151,7 @@ function cap_parse($url){
         if (($time > $sent) && ($time < $expires)) {
             //If true, print HTML using event and description info
             $returnArray["description"] = $description;
-            $returnArray["class"] = "alert alert-danger alert-error";
+            $returnArray["class"] = "alert alert-danger";
             $returnArray["headline"] = $headline;
             $returnArray["event"] = $event;
         }
@@ -173,10 +170,11 @@ function returnHtmlNClearCache($new_data)
     if(!empty($new_data["description"]))
     {
         $class = $new_data["class"];
-        $html = "<div class='container'>
+        /*Not being Used*/
+        $html = "<div id='ravealertheader' class='container'>
                     <div class='row'>
-                     <div class='span12 top-spacing30'>
-                        <div id='alertmessage' class='".$new_data["class"]."' >
+                     <div class='span12'>
+                        <div id='ravealertmessage' class='".$new_data["class"]."' >
                         <h1>".$new_data["event"]."</h1>
                         <p>".$new_data["headline"]."</p>
                         <p>".$new_data["description"]."</p></div>
@@ -184,7 +182,11 @@ function returnHtmlNClearCache($new_data)
                     </div>
                  </div>";
     }
-    $new_display_message = !empty($new_data["event"]) ?  "<h3>".$new_data["event"]."</h3><p>".$new_data["headline"]."</p><p>".$new_data["description"]."</p>" : "";
+
+    /* Alert Message Stored to Database */
+    /* TODO: Replace alert site link with site defined in config */
+    $new_display_message = !empty($new_data["event"]) ?  "<div class='col-sm-2'><span class='glyphicon glyphicon-warning-sign' aria-hidden='true'></span></div><div class='col-sm-10'><div id='ravealertmessage'><h2>".$new_data["event"]."</h2><p>".$new_data["headline"]." <a href='http://www.bellevuecollege.edu/alerts/'>More Information.</a></p></div></div></div>": "";
+
 
 //Clear the cache if there is a new message
     $check = compareCurrentNewMessage($new_display_message);
