@@ -27,8 +27,6 @@ if (is_multisite() && current_user_can('manage_network'))  {
         
         check_admin_referer('save_network_settings', 'my-network-plugin');
 
-        //sample code from Professional WordPress book
-
         //store option values in a variable
         $network_settings = $_POST['network_settings'];
 
@@ -48,9 +46,12 @@ if (is_multisite() && current_user_can('manage_network'))  {
             $submit_message = '<div id="message" class="updated fade"><p><strong>Rave Alert network settings updated!</strong></p></div>';
         }
         
-        //use array map function to sanitize option values
+        //use array map and WP function to sanitize option values
+        $open_message = wp_kses_post($network_settings["ravealert_college_openmessage"]);
         $network_settings = array_map( 'sanitize_text_field', $network_settings );
-    
+        //reset the college open message since it was sanitized differently to allow HTML but strip anything not allowed in WP posts
+        $network_settings["ravealert_college_openmessage"] = $open_message;
+        
         //save option values
         update_site_option( 'ravealert_network_settings', $network_settings );
         
@@ -79,7 +80,7 @@ if (is_multisite() && current_user_can('manage_network'))  {
         }
         $ravealert_currentMsg = get_site_option('ravealert_currentMsg');
         $ravealert_clearCacheCommand = base64_decode($network_settings['ravealert_clearCacheCommand']);
-        $ravealert_college_openmessage = $network_settings['ravealert_college_openmessage'];
+        $ravealert_college_openmessage = stripslashes($network_settings['ravealert_college_openmessage']);
         $ravealert_xml_feedurl = $network_settings['ravealert_xml_feedurl'];
         
         $archive_alert = $network_settings['ravealert_do_archive'];
@@ -177,7 +178,7 @@ if (is_multisite() && current_user_can('manage_network'))  {
 
                 </th>
                 <td>
-                    <?php echo $ravealert_currentMsg; ?>
+                    <?php echo stripslashes($ravealert_currentMsg); ?>
                 </td>
             </tr>
         </table>
