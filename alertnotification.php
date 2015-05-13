@@ -183,9 +183,23 @@ function returnHtmlNClearCache($new_data)
                  </div>";
     }
 
+	/* More Information Link */
+
+	/* Load settings */
+	$network_settings = get_site_option( 'ravealert_network_settings' );
+	$ravealert_do_archive = $network_settings['ravealert_do_archive'];
+	$more_info_site_id = $network_settings['ravealert_archive_site'];
+
+	$more_info_message = "";
+
+	/* Check if archive site is set */
+	if ( $more_info_site_id != "" && $ravealert_do_archive == "true") {
+		$more_info_site = get_blog_details( $more_info_site_id )->path;
+		$more_info_message = "<a href='".$more_info_site."'>More Information.</a>";
+	}
+
     /* Alert Message Stored to Database */
-    /* TODO: Replace alert site link with site defined in config */
-    $new_display_message = !empty($new_data["event"]) ?  "<div class='col-sm-2'><span class='glyphicon glyphicon-warning-sign' aria-hidden='true'></span></div><div class='col-sm-10'><div id='ravealertmessage'><h2>".$new_data["event"]."</h2><p>".$new_data["headline"]." <a href='http://www.bellevuecollege.edu/alerts/'>More Information.</a></p></div></div></div>": "";
+    $new_display_message = !empty($new_data["event"]) ?  "<div class='col-sm-2'><span class='glyphicon glyphicon-warning-sign' aria-hidden='true'></span></div><div class='col-sm-10'><div id='ravealertmessage'><h2>".$new_data["event"]."</h2><p>".$new_data["headline"]." ".$more_info_message."</p></div></div></div>": "";
 
 
 //Clear the cache if there is a new message
