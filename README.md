@@ -12,12 +12,17 @@ License URI:
 
 == Description ==
 This plugin parses the CAP(Common Access Protocol) xml feed to extract the description and applies the logic to calculate the time range for which the message will be displayed.
-It adds the message right after the body tag. In addition to displaying the message, it also clears the cache.
+It adds the message right after the body tag. In addition to displaying the message, it also clears the cache and creates a post of the message on the specified website in the configuration.
+
+
+== Configuration ==
 Settings page allows to set following variables:
 High Alert Flag
 College Open Message
 XML Feed URL
 Clear Cache Url
+Create Archive for rave alerts
+Archive Site
 
 The settings will be network wide.
 Plugin uses Twitter Bootstrap. Here is the url:

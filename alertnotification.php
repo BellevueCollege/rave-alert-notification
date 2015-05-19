@@ -106,6 +106,7 @@ function getOpenMsg()
 
 add_filter('cron_schedules', 'new_interval');
 
+
 // add once 1 minute interval to wp schedules
 function new_interval($interval) {
 
@@ -113,7 +114,7 @@ function new_interval($interval) {
 
     return $interval;
 }
-add_action( 'my_cron', 'myCronFunction' );
+
 
 if ( ! wp_next_scheduled( 'my_cron' ) ) {
     wp_schedule_event( time(), 'minutes_1', 'my_cron' );
@@ -122,8 +123,8 @@ else
 {
     //error_log("my cron is already scheduled");
 }
-//wp_cron();
 
+add_action( 'my_cron', 'myCronFunction' );
 
 function myCronFunction()
 {
@@ -141,6 +142,7 @@ function myCronFunction()
          //error_log("\n"."Error: Server ".$key." returns ".$value["return_value"]." while running command ".$value["command_run"]."\n");
         //error_log("A new post is created with post id :".$return_post_id);
     }
+    wp_clear_scheduled_hook('my_cron');
     
 }
 /*
@@ -325,12 +327,14 @@ function createRavePost($xml_data)
         $network_settings = get_site_option( 'ravealert_network_settings' );
         $check_to_archive = $network_settings['ravealert_do_archive'];
         $archive_blog_id = $network_settings['ravealert_archive_site'];
-        $current_blog_id = get_current_blog_id();
-        error_log("blog id :".$archive_blog_id);
-        error_log("check archive:".$check_to_archive);
+        global $blog_id;
+        //$current_blog_id = get_current_blog_id();
+       // error_log(" current blog id :".$blog_id);
+        //error_log("archive blog id:".$archive_blog_id);
         //get the blog id onto which the archive posts needs to be created.
-        if($check_to_archive == "true")
-        {           
+        if($check_to_archive == "true") //&& $blog_id == $archive_blog_id) //&& strcmp($blog_id , $archive_blog_id) == 0 )
+        {      
+           //if($current_blog_id == $archive_blog_id )     
              switch_to_blog( $archive_blog_id );               
         // Check if the post already exists. Creat a new post if it does not exist.
           global $wpdb;
@@ -348,9 +352,18 @@ function createRavePost($xml_data)
                     'post_author'   => 1,
                 );
                 $post_return_value = wp_insert_post( $post_args );                   
-                error_log("post return value:".$post_return_value);
+                //error_log("post return value:".$post_return_value);
+                // if($post_return_value)
+                // {
+                //     $post_args = array(
+                //     'ID'          => $post_return_value,
+                //     'post_name'   => $identifier,                    
+                //         );
+
+                //     wp_update_post($post_args);
+                // }
             }   
-            restore_current_blog();                       
+        restore_current_blog();                       
                                 
         }
 
