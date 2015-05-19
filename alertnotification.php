@@ -321,9 +321,7 @@ function createRavePost($xml_data)
         $event = $xml_data["event"] ;
         $headline = $xml_data["headline"];
         $description = $xml_data["description"];
-        $identifier = $xml_data["identifier"];
-
-        $all_site_information = wp_get_sites();
+        $identifier = $xml_data["identifier"];       
         $network_settings = get_site_option( 'ravealert_network_settings' );
         $check_to_archive = $network_settings['ravealert_do_archive'];
         $archive_blog_id = $network_settings['ravealert_archive_site'];
