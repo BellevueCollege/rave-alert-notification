@@ -29,6 +29,3 @@ http://getbootstrap.com/css/
 4. Go to the network settings page to set the fields.
 
 
-== Changelog ==
-= v1 =
-* Initial version
