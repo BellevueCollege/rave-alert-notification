@@ -66,8 +66,9 @@ function getOpenMsg()
     $high_alert = $network_settings['high_alert'];
     $open_message = $network_settings['ravealert_college_openmessage'];
     $url = $network_settings['ravealert_xml_feedurl'];
+    
     $new_data = cap_parse($url);
-    // var_dump($new_data);
+     //var_dump($url);
    
     $returnArray = array();
     if(!isset($new_data) || !isset($new_data["description"]) || empty($new_data["description"])) // if the description is empty or not set
@@ -115,17 +116,17 @@ function new_interval($interval) {
 
     return $interval;
 }
+/* 
+    Removing the my_cron and adding rave_cron
+ *  */
 
+ wp_clear_scheduled_hook( 'my_cron'); 
 
-if ( ! wp_next_scheduled( 'my_cron' ) ) {
-    wp_schedule_event( time(), 'minutes_1', 'my_cron' );
+if ( ! wp_next_scheduled( 'rave_cron' ) ) {
+    wp_schedule_event( time(), 'minutes_1', 'rave_cron' );
 }
-else
-{
-    //error_log("my cron is already scheduled");
-}
 
-add_action( 'my_cron', 'myCronFunction' );
+add_action( 'rave_cron', 'myCronFunction' );
 
 function myCronFunction()
 {
@@ -156,7 +157,8 @@ function cap_parse($url){
     $xml = @simplexml_load_file($url);
     if($xml)
     {
-        $identifier = $xml->identifier;        
+        $identifier = $xml->identifier;  
+        $msgType = $xml->msgType;
         $event = $xml->info->event;
         $description=$xml->info->description;
         $headline =$xml->info->headline;
@@ -167,7 +169,7 @@ function cap_parse($url){
         //Get current time
         $time = time();
         //Test to see if current time is between effective time and expire time
-        if (($time > $sent) && ($time < $expires)) {
+        if (strtolower($msgType) != 'cancel' &&   ($time > $sent) && ($time < $expires)) {
             //If true, print HTML using event and description info
             $returnArray["identifier"] = $identifier;
             $returnArray["description"] = $description;
