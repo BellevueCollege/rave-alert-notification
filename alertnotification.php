@@ -4,7 +4,7 @@ Plugin Name: Rave Alert Notification
 Plugin URI: https://github.com/BellevueCollege/rave-alert-notification
 Description: Sends Rave Alert notification to Bellevue College WordPress sites.
 Author: Bellevue College Technology Development and Communications
-Version: 1.3.0.1
+Version: 1.3.0.2
 Author URI: http://www.bellevuecollege.edu
 GitHub Plugin URI: bellevuecollege/rave-alert-notification
 */
@@ -144,7 +144,7 @@ function myCronFunction()
          //error_log("\n"."Error: Server ".$key." returns ".$value["return_value"]." while running command ".$value["command_run"]."\n");
         //error_log("A new post is created with post id :".$return_post_id);
     }
-    wp_clear_scheduled_hook('my_cron');
+    wp_clear_scheduled_hook('rave_cron');
     
 }
 /*
