@@ -66,10 +66,10 @@ function getOpenMsg()
     $high_alert = $network_settings['high_alert'];
     $open_message = $network_settings['ravealert_college_openmessage'];
     $url = $network_settings['ravealert_xml_feedurl'];
-    
+
     $new_data = cap_parse($url);
      //var_dump($url);
-   
+
     $returnArray = array();
     if(!isset($new_data) || !isset($new_data["description"]) || empty($new_data["description"])) // if the description is empty or not set
     {
@@ -116,11 +116,11 @@ function new_interval($interval) {
 
     return $interval;
 }
-/* 
+/*
     Removing the my_cron and adding rave_cron
  *  */
 
- wp_clear_scheduled_hook( 'my_cron'); 
+ wp_clear_scheduled_hook( 'my_cron');
 
 if ( ! wp_next_scheduled( 'rave_cron' ) ) {
     wp_schedule_event( time(), 'minutes_1', 'rave_cron' );
@@ -131,13 +131,13 @@ add_action( 'rave_cron', 'myCronFunction' );
 function myCronFunction()
 {
     //error_log("############################CRON TAB is Running #######################");
-    
+
 
     $network_settings = get_site_option( 'ravealert_network_settings' );
     $url = $network_settings['ravealert_xml_feedurl'];//;get_template_directory() . '/inc/alert-notification/channel1.xml';
     $xml_data = cap_parse($url);
     $getHtml = returnHtmlNClearCache($xml_data);
-    
+
     $return_post_id = createRavePost($xml_data);
     if($return_post_id)
     {
@@ -145,7 +145,7 @@ function myCronFunction()
         //error_log("A new post is created with post id :".$return_post_id);
     }
     wp_clear_scheduled_hook('rave_cron');
-    
+
 }
 /*
  * Parses the xml feed through CAP
@@ -157,7 +157,7 @@ function cap_parse($url){
     $xml = @simplexml_load_file($url);
     if($xml)
     {
-        $identifier = $xml->identifier;  
+        $identifier = $xml->identifier;
         $msgType = $xml->msgType;
         $event = $xml->info->event;
         $description=$xml->info->description;
@@ -224,7 +224,7 @@ function returnHtmlNClearCache($new_data)
     $new_display_message = !empty($new_data["event"]) ?  "<div class='col-sm-2'><span class='glyphicon glyphicon-warning-sign' aria-hidden='true'></span></div><div class='col-sm-10'><div id='ravealertmessage'><h2>".$new_data["event"]."</h2><p>".$new_data["headline"]." ".$more_info_message."</p></div></div></div>": "";
 
 
-  
+
 
 //Clear the cache if there is a new message
     $check = compareCurrentNewMessage($new_display_message);
@@ -235,9 +235,9 @@ function returnHtmlNClearCache($new_data)
         if(!$cache_cleared)
             error_log("ERROR: CACHE IS NOT BEING CLEARED");
 
-       
 
-        
+
+
     }
     //Updated the new message and the class variable in the database
     updateCurrentMsg($new_display_message,$class);
@@ -312,7 +312,7 @@ function updateCurrentMsg($new_display_message,$class)
 
 
 /*
-* Create new post 
+* Create new post
 */
 
 function createRavePost($xml_data)
@@ -324,7 +324,7 @@ function createRavePost($xml_data)
         $event = $xml_data["event"] ;
         $headline = $xml_data["headline"];
         $description = $xml_data["description"];
-        $identifier = $xml_data["identifier"];       
+        $identifier = $xml_data["identifier"];
         $network_settings = get_site_option( 'ravealert_network_settings' );
         $check_to_archive = $network_settings['ravealert_do_archive'];
         $archive_blog_id = $network_settings['ravealert_archive_site'];
@@ -334,16 +334,16 @@ function createRavePost($xml_data)
         //error_log("archive blog id:".$archive_blog_id);
         //get the blog id onto which the archive posts needs to be created.
         if($check_to_archive == "true") //&& $blog_id == $archive_blog_id) //&& strcmp($blog_id , $archive_blog_id) == 0 )
-        {      
-           //if($current_blog_id == $archive_blog_id )     
-             switch_to_blog( $archive_blog_id );               
+        {
+           //if($current_blog_id == $archive_blog_id )
+             switch_to_blog( $archive_blog_id );
         // Check if the post already exists. Creat a new post if it does not exist.
           global $wpdb;
 
           $post_id_exists = $wpdb->get_var($wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE post_name=%s LIMIT 1", $identifier))  ;
-          //error_log("post id of the existing post :".$post_id_exists);             
+          //error_log("post id of the existing post :".$post_id_exists);
             if(!$post_id_exists)
-            { 
+            {
                 $description = $headline . "<!--more-->" . $description;
                  $post_args = array(
                     'post_name'   => $identifier,
@@ -352,20 +352,20 @@ function createRavePost($xml_data)
                     'post_status'   => 'publish',
                     'post_author'   => 1,
                 );
-                $post_return_value = wp_insert_post( $post_args );                   
+                $post_return_value = wp_insert_post( $post_args );
                 //error_log("post return value:".$post_return_value);
                 // if($post_return_value)
                 // {
                 //     $post_args = array(
                 //     'ID'          => $post_return_value,
-                //     'post_name'   => $identifier,                    
+                //     'post_name'   => $identifier,
                 //         );
 
                 //     wp_update_post($post_args);
                 // }
-            }   
-        restore_current_blog();                       
-                                
+            }
+        restore_current_blog();
+
         }
 
     }
