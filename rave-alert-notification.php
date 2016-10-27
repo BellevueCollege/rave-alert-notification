@@ -12,6 +12,7 @@ GitHub Plugin URI: bellevuecollege/rave-alert-notification
 require_once("alert-config.php");
 
 
+
 /*
  * Putting the College open message functionality to run outside of cron job
  * */
@@ -33,20 +34,32 @@ function test_get_buffer( $buffer){
 
     $rave_message = get_site_option('ravealert_currentMsg');
     $rave_class = get_site_option('ravealert_classCurrentMsg');
+    $severity = get_site_option('ravealert_severity');
+    
     if($rave_message!="")
     {
         $rave_html = "<div id='ravealertheader' class='container ".$rave_class."''>
-                        <div class='row'>
-                            ".$rave_message."
-	                    </div>
-                    </div>
-                      ";
+                            <div class='row'>
+                                ".$rave_message."
+                                </div>
+                        </div>
+                          ";
         preg_match('#<body.+>#',$buffer,$matches);
         if(isset($matches[0]) && !empty($matches[0]))
         {
-            $concat_html = $matches[0].$rave_html;//Appending the rave alert message right after the start of body tag.
+            if(strtolower($severity) == 'minor')
+            {
+                if(is_home())
+                {
+                    $concat_html = $matches[0].$rave_html;//Appending the rave alert message right after the start of body tag.                    
+                }
+            }
+            else
+            {
+                 $concat_html = $matches[0].$rave_html;//Appending the rave alert message right after the start of body tag.
+            }
             if ( ! is_admin() && ! is_login_page())
-                return preg_replace( '#<body.+>#', $concat_html, $buffer);
+                        return preg_replace( '#<body.+>#', $concat_html, $buffer);
         }
     }
     return $buffer;
@@ -66,9 +79,8 @@ function getOpenMsg()
     $high_alert = $network_settings['high_alert'];
     $open_message = $network_settings['ravealert_college_openmessage'];
     $url = $network_settings['ravealert_xml_feedurl'];
-
     $new_data = cap_parse($url);
-     //var_dump($url);
+     
 
     $returnArray = array();
     if(!isset($new_data) || !isset($new_data["description"]) || empty($new_data["description"])) // if the description is empty or not set
@@ -95,6 +107,7 @@ function getOpenMsg()
                 if(!$cache_cleared)
                     error_log("ERROR: CACHE IS NOT BEING CLEARED");
             }
+            $severity = $new_data['severity'];            
             updateCurrentMsg($new_display_message,$class);
         }
     }
@@ -132,19 +145,22 @@ function myCronFunction()
 {
     //error_log("############################CRON TAB is Running #######################");
 
-
+if(get_current_blog_id() == 1) // will run only for home site
+{
     $network_settings = get_site_option( 'ravealert_network_settings' );
     $url = $network_settings['ravealert_xml_feedurl'];//;get_template_directory() . '/inc/alert-notification/channel1.xml';
+    
     $xml_data = cap_parse($url);
+   
     $getHtml = returnHtmlNClearCache($xml_data);
 
     $return_post_id = createRavePost($xml_data);
     if($return_post_id)
     {
-         //error_log("\n"."Error: Server ".$key." returns ".$value["return_value"]." while running command ".$value["command_run"]."\n");
-        //error_log("A new post is created with post id :".$return_post_id);
+         
     }
     wp_clear_scheduled_hook('rave_cron');
+}
 
 }
 /*
@@ -154,9 +170,12 @@ function cap_parse($url){
 
     //Load XML File and get values
     $returnArray = array();
+    //$url = 'http://www.getrave.com/cap/bellevuecollege/channel3';
     $xml = @simplexml_load_file($url);
-    if($xml)
-    {
+    //$xml = simplexml_load_file($url) or die("Rave Alert Error: Cannot create object.");
+    
+    if(!empty($xml))
+    {        
         $identifier = $xml->identifier;
         $msgType = $xml->msgType;
         $event = $xml->info->event;
@@ -165,7 +184,8 @@ function cap_parse($url){
         $effective=strtotime($xml->info->effective); // No use for us since the expiration time is calculated basis on the sent time by CAP.
         $sent = strtotime($xml->sent);
         $expires=strtotime($xml->info->expires);
-
+        $severity = $xml->info->severity;
+        
         //Get current time
         $time = time();
         //Test to see if current time is between effective time and expire time
@@ -173,12 +193,17 @@ function cap_parse($url){
             //If true, print HTML using event and description info
             $returnArray["identifier"] = $identifier;
             $returnArray["description"] = $description;
-            $returnArray["class"] = "alert alert-danger";
+            if(strtolower($severity) == 'minor')
+                $returnArray["class"] = "alert alert-info";
+            else
+                $returnArray["class"] = "alert alert-danger";
             $returnArray["headline"] = $headline;
             $returnArray["event"] = $event;
+            $returnArray["severity"] = $severity;
         }
 
     }
+    
     return $returnArray;
 } //End of cap_parse function
 
@@ -204,7 +229,9 @@ function returnHtmlNClearCache($new_data)
                     </div>
                  </div>";
     }
+    
 
+   
 	/* More Information Link */
 
 	/* Load settings */
@@ -222,18 +249,30 @@ function returnHtmlNClearCache($new_data)
 
     /* Alert Message Stored to Database */
     $new_display_message = !empty($new_data["event"]) ?  "<div class='col-sm-2'><span class='glyphicon glyphicon-warning-sign' aria-hidden='true'></span></div><div class='col-sm-10'><div id='ravealertmessage'><h2>".$new_data["event"]."</h2><p>".$new_data["headline"]." ".$more_info_message."</p></div></div></div>": "";
-
-
-
+    
+    // Set severity
+    $severity = !empty($new_data['severity']) ? $new_data['severity'] : '' ;
+ 
+ 
+        $ravealert_severity = get_site_option('ravealert_severity','empty');
+        
+    if($ravealert_severity == 'empty')
+    {
+       add_site_option( "ravealert_severity", (string)$severity );        
+    }
+    else
+    {
+       update_site_option("ravealert_severity",(string)$severity);       
+    }
 
 //Clear the cache if there is a new message
     $check = compareCurrentNewMessage($new_display_message);
-   // error_log("check :".$check);
+  
     if($check)
     {
         $cache_cleared = clearCache();
         if(!$cache_cleared)
-            error_log("ERROR: CACHE IS NOT BEING CLEARED");
+            error_log("Rave Alert ERROR: CACHE IS NOT BEING CLEARED");
 
 
 
@@ -260,7 +299,7 @@ function clearCache()
             {
                 if($value["return_value"] != 0)
                 {
-                    error_log("\n"."Error: Server ".$key." returns ".$value["return_value"]." while running command ".$value["command_run"]."\n");
+                    error_log("\n"." Rave Alert Error: Server ".$key." returns ".$value["return_value"]." while running command ".$value["command_run"]."\n");
                     return false;
                 }
                 else
@@ -279,6 +318,7 @@ function compareCurrentNewMessage($new_message)
 {
     $currentMsg = get_site_option('ravealert_currentMsg');
     $classForMsg = get_site_option('ravealert_classCurrentMsg');
+    
     if(!$currentMsg)
     {
         add_site_option( "ravealert_currentMsg", "" );
@@ -287,12 +327,11 @@ function compareCurrentNewMessage($new_message)
     {
         add_site_option( "ravealert_classCurrentMsg", "" );
     }
+    
     if($currentMsg != $new_message)
     {
-        //error_log("Return true");
         return true;
-    }
-     //error_log("Return false");
+    }     
     return false;
 }
 function returnContentsOfUrl($url)
@@ -308,6 +347,7 @@ function updateCurrentMsg($new_display_message,$class)
 {
     update_site_option("ravealert_currentMsg", $new_display_message);
     update_site_option("ravealert_classCurrentMsg", $class);
+    
 }
 
 

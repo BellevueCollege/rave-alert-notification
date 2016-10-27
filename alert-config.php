@@ -79,6 +79,8 @@ if (is_multisite() && current_user_can('manage_network'))  {
             $falseSelected = "checked";
         }
         $ravealert_currentMsg = get_site_option('ravealert_currentMsg');
+        $ravealert_severity = get_site_option('ravealert_severity');
+        echo $ravealert_severity;
         $ravealert_clearCacheCommand = base64_decode($network_settings['ravealert_clearCacheCommand']);
         $ravealert_college_openmessage = stripslashes($network_settings['ravealert_college_openmessage']);
         $ravealert_xml_feedurl = $network_settings['ravealert_xml_feedurl'];
@@ -169,6 +171,17 @@ if (is_multisite() && current_user_can('manage_network'))  {
                         <option value="<?php echo $net_site["blog_id"]; ?>" <?php echo $site_selected; ?>><?php echo $blog_name; ?></option>
                     <?php } ?>
                     </select>
+                </td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">
+                    <label>
+                        Rave Alert Severity
+                    </label>
+
+                </th>
+                <td>
+                    <?php echo stripslashes($ravealert_severity); ?>
                 </td>
             </tr>
             <tr valign="top">
