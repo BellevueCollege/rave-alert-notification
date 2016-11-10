@@ -24,7 +24,7 @@ http://getbootstrap.com/css/
 
 ## Installation
 1. Download plugin files from https://github.com/BellevueCollege/rave-alert-notification.
-2. Place the plugin folder in your `wp-content/plugins/` directory and activate it.
+2. Place the plugin folder in your `wp-content/plugins/` directory and activate it at the network level.
 3. Set the CAP Inbound and CAP outbound channels.
 4. Go to the network settings page to set the fields.
 
