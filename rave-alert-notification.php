@@ -23,14 +23,9 @@ function enqueue_ajax() {
     $rest_url = site_url('/wp-json/rave/v' . Rave_Alert_API::$rest_version) . '/alerts/';
     $more_info_message = returnMoreInfoMsg();
     
-    //checks if alert data is not empty, if false then it won't call/enqueue ajax
-    //$valid_alert = ( !empty($data) ? true : false );
-
-    //if ( $valid_alert == true ) {
-        $rest_variables = 'var rest_php_variables = {rest_url: "' . $rest_url . '", more_info_message: "' . $more_info_message . '"};';
-        wp_enqueue_script( 'rave-alert-ajax', plugin_dir_url( __FILE__ ) . 'js/rave-alert-ajax.js', array('jquery'), '1.0.0' );
-        wp_add_inline_script( 'rave-alert-ajax', $rest_variables, 'before' );
-    //}
+    $rest_variables = 'var rest_php_variables = {rest_url: "' . $rest_url . '", more_info_message: "' . $more_info_message . '"};';
+    wp_enqueue_script( 'rave-alert-ajax', plugin_dir_url( __FILE__ ) . 'js/rave-alert-ajax.js', array('jquery'), '1.0.0' );
+    wp_add_inline_script( 'rave-alert-ajax', $rest_variables, 'before' );
 
 }
 add_action( 'wp_enqueue_scripts', 'enqueue_ajax' );
@@ -44,57 +39,56 @@ add_action( 'wp_enqueue_scripts', 'enqueue_ajax' );
 $new_data = getOpenMsg();
 //error_log(print_r(get_current_site(),true));
 
-add_action( 'init', 'test_start_buffer', 0, 0 );
+//add_action( 'init', 'test_start_buffer', 0, 0 );
 
-function test_start_buffer(){
-    ob_start( 'test_get_buffer' );
-}
+//function test_start_buffer(){
+//    ob_start( 'test_get_buffer' );
+//}
 
 /*
  * Appends rave alert current message to the start of body tag.
  */
 
-/*
-function test_get_buffer($buffer){
+// function test_get_buffer($buffer){
 
-    $rave_message = get_site_option('ravealert_currentMsg');
-    $rave_class = get_site_option('ravealert_classCurrentMsg');
-    $severity = get_site_option('ravealert_severity');
+//     $rave_message = get_site_option('ravealert_currentMsg');
+//     $rave_class = get_site_option('ravealert_classCurrentMsg');
+//     $severity = get_site_option('ravealert_severity');
     
-    if($rave_message!="")
-    {
-        $rave_html = "<div id='ravealertheader' class='container " . $rave_class . "'>
-                        <div class='row'>"
-                            . $rave_message . "
-                        </div>
-                    </div>
-                    ";
+//     if($rave_message!="")
+//     {
+//         $rave_html = "<div id='ravealertheader' class='container " . $rave_class . "'>
+//                         <div class='row'>"
+//                             . $rave_message . "
+//                         </div>
+//                     </div>
+//                     ";
 
-        preg_match('#<body.+>#',$buffer,$matches);
-        if(isset($matches[0]) && !empty($matches[0]))
-        {
-            if(strtolower($severity) == 'minor')
-            {
-                if ( is_main_site() and is_front_page() )
-                {
-                    $concat_html = $matches[0].$rave_html; //Appending the rave alert message right after the start of body tag.
-                }
-            }
-            else
-            {
-                 $concat_html = $matches[0].$rave_html;//Appending the rave alert message right after the start of body tag.
-            }
-            if ( ! is_admin() && ! is_login_page())
-                        return preg_replace( '#<body.+>#', $concat_html, $buffer);
-        }
-    }
-    return $buffer;
+//         preg_match('#<body.+>#',$buffer,$matches);
+//         if(isset($matches[0]) && !empty($matches[0]))
+//         {
+//             if(strtolower($severity) == 'minor')
+//             {
+//                 if ( is_main_site() and is_front_page() )
+//                 {
+//                     $concat_html = $matches[0].$rave_html; //Appending the rave alert message right after the start of body tag.
+//                 }
+//             }
+//             else
+//             {
+//                  $concat_html = $matches[0].$rave_html;//Appending the rave alert message right after the start of body tag.
+//             }
+//             if ( ! is_admin() && ! is_login_page())
+//                         return preg_replace( '#<body.+>#', $concat_html, $buffer);
+//         }
+//     }
+//     return $buffer;
 
-} */
+// } 
 
-function is_login_page() {
-    return in_array($GLOBALS['pagenow'], array('wp-login.php', 'wp-register.php'));
-}
+// function is_login_page() {
+//     return in_array($GLOBALS['pagenow'], array('wp-login.php', 'wp-register.php'));
+// }
 
 /*
  * Updates the current message if xml feed description is empty and high alert flag is set to true
@@ -132,8 +126,7 @@ function getOpenMsg()
                 $cache_cleared = clearCache();
                 if(!$cache_cleared)
                     error_log("ERROR: CACHE IS NOT BEING CLEARED");
-            }
-            $severity = $new_data['severity'];   
+            } 
             updateCurrentMsg($new_display_message,$class);
         }
     }
@@ -279,8 +272,8 @@ function returnHtmlNClearCache($new_data)
     </div>
     <div class='col-sm-10'>
         <div id='ravealertmessage'>
-            <h2 id='ravealertevent'><?php echo (!isset($rave_transient_data) ? 'Loading Alert...' : $rave_transient_data['info']['event']); ?> </h2>
-            <p> <?php echo (!isset($rave_transient_data) ? 'Loading Headline...' : $rave_transient_data['info']['headline']); ?> <?php echo $more_info_message ?> </p>
+            <h2 id='ravealertevent'><?php echo (!isset($rave_transient_data) ? '' : $rave_transient_data['info']['event']); ?> </h2>
+            <p> <?php echo (!isset($rave_transient_data) ? '' : $rave_transient_data['info']['headline']); ?> <?php echo $more_info_message ?> </p>
         </div>
     </div> 
     <?php
