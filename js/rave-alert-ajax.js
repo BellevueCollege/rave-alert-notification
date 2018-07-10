@@ -58,6 +58,11 @@ jQuery( document ).ready( function( $ ) {
                 });
             } else { // if string is not returned
                 console.log('Error rave-alert-ajax: Non-string data returned.');
+
+                //check if an alert exists and remove it
+                if ($('#ravealertheader').length == 1){
+                    $('#ravealertheader').remove();
+                }
             }
 
         }).fail(function(error){

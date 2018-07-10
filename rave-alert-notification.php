@@ -39,57 +39,6 @@ add_action( 'wp_enqueue_scripts', 'enqueue_ajax' );
 $new_data = getOpenMsg();
 //error_log(print_r(get_current_site(),true));
 
-//add_action( 'init', 'test_start_buffer', 0, 0 );
-
-//function test_start_buffer(){
-//    ob_start( 'test_get_buffer' );
-//}
-
-/*
- * Appends rave alert current message to the start of body tag.
- */
-
-// function test_get_buffer($buffer){
-
-//     $rave_message = get_site_option('ravealert_currentMsg');
-//     $rave_class = get_site_option('ravealert_classCurrentMsg');
-//     $severity = get_site_option('ravealert_severity');
-    
-//     if($rave_message!="")
-//     {
-//         $rave_html = "<div id='ravealertheader' class='container " . $rave_class . "'>
-//                         <div class='row'>"
-//                             . $rave_message . "
-//                         </div>
-//                     </div>
-//                     ";
-
-//         preg_match('#<body.+>#',$buffer,$matches);
-//         if(isset($matches[0]) && !empty($matches[0]))
-//         {
-//             if(strtolower($severity) == 'minor')
-//             {
-//                 if ( is_main_site() and is_front_page() )
-//                 {
-//                     $concat_html = $matches[0].$rave_html; //Appending the rave alert message right after the start of body tag.
-//                 }
-//             }
-//             else
-//             {
-//                  $concat_html = $matches[0].$rave_html;//Appending the rave alert message right after the start of body tag.
-//             }
-//             if ( ! is_admin() && ! is_login_page())
-//                         return preg_replace( '#<body.+>#', $concat_html, $buffer);
-//         }
-//     }
-//     return $buffer;
-
-// } 
-
-// function is_login_page() {
-//     return in_array($GLOBALS['pagenow'], array('wp-login.php', 'wp-register.php'));
-// }
-
 /*
  * Updates the current message if xml feed description is empty and high alert flag is set to true
  */
