@@ -109,7 +109,7 @@ add_action( 'rave_cron', 'myCronFunction' );
 
 function myCronFunction()
 {
-    error_log("############################CRON TAB is Running #######################");
+    //error_log("############################CRON TAB is Running #######################");
 
     if ( is_main_site() ) // will run only for home site
     {
