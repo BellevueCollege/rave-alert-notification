@@ -4,7 +4,7 @@ Plugin Name: Rave Alert Notification
 Plugin URI: https://github.com/BellevueCollege/rave-alert-notification
 Description: Sends Rave Alert notification to Bellevue College WordPress sites.
 Author: Bellevue College Technology Development and Communications
-Version: 1.6
+Version: 1.6.0.2
 Author URI: http://www.bellevuecollege.edu
 GitHub Plugin URI: bellevuecollege/rave-alert-notification
 */
@@ -20,11 +20,11 @@ function enqueue_ajax() {
     $network_settings = get_site_option( 'ravealert_network_settings' );
     $url = $network_settings['ravealert_xml_feedurl']; //get alert URL
     $data = cap_parse($url); //retrieve alert data
-    $rest_url = site_url('/wp-json/rave/v' . Rave_Alert_API::$rest_version) . '/alerts/';
+    $rest_url = network_site_url('/wp-json/rave/v' . Rave_Alert_API::$rest_version) . '/alerts/';
     $more_info_message = returnMoreInfoMsg();
     
     $rest_variables = 'var rest_php_variables = {rest_url: "' . $rest_url . '", more_info_message: "' . $more_info_message . '"};';
-    wp_enqueue_script( 'rave-alert-ajax', plugin_dir_url( __FILE__ ) . 'js/rave-alert-ajax.js', array('jquery'), '1.0.0' );
+    wp_enqueue_script( 'rave-alert-ajax', plugin_dir_url( __FILE__ ) . 'js/rave-alert-ajax.js#asyncdeferload', array('jquery'), '1.0.0', true );
     wp_add_inline_script( 'rave-alert-ajax', $rest_variables, 'before' );
 
 }

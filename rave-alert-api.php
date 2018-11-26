@@ -101,7 +101,6 @@ class Rave_Alert_API {
                 return json_decode($alert_json);
  
             } else { //returns transient data if there is a transient
-                
                 return json_decode($rave_transient);
             }
         }
@@ -118,7 +117,7 @@ class Rave_Alert_API {
         $parameters = $request->get_url_params(); //get the URL parameters from the request
         $rave_identifier = $parameters['identifier']; //get only the identifier passed into URL parameters from the registered route
         
-        if ( preg_match( '/^(\d{21})$/', $rave_identifier ) ) {
+        if ( preg_match( '/^(\d{22})$/', $rave_identifier ) ) {
             $alert = self::rave_load_alert();
 
             // If the identifiers match
@@ -137,4 +136,7 @@ class Rave_Alert_API {
     }
 }
 
-$rave_alert_api = new Rave_Alert_API();
+// Instantiate on the main site in network only
+if ( is_main_site() ) {
+	$rave_alert_api = new Rave_Alert_API();
+}
