@@ -30,11 +30,6 @@ function ravealert_network_settings() {
             //store option values in a variable
             $network_settings = $_POST['network_settings'];
 
-            $cacheCommand = $network_settings["ravealert_clearCacheCommand"];
-            $cacheCommand = stripslashes($cacheCommand);
-            $cacheCommand = base64_encode($cacheCommand);
-            $network_settings["ravealert_clearCacheCommand"] = $cacheCommand;
-            
             //if choose to archive, throw error if archive site not chosen
             $submit_message = "";
             if ( isset($network_settings["ravealert_do_archive"]) && $network_settings["ravealert_do_archive"] == "true" && empty($network_settings["ravealert_archive_site"]) ) {
@@ -81,7 +76,6 @@ function ravealert_network_settings() {
             $ravealert_currentMsg = get_site_option('ravealert_currentMsg');
             $ravealert_severity = get_site_option('ravealert_severity');
             echo $ravealert_severity;
-            $ravealert_clearCacheCommand = base64_decode($network_settings['ravealert_clearCacheCommand']);
             $ravealert_college_openmessage = stripslashes($network_settings['ravealert_college_openmessage']);
             $ravealert_xml_feedurl = $network_settings['ravealert_xml_feedurl'];
             
@@ -128,17 +122,6 @@ function ravealert_network_settings() {
                     </th>
                     <td>
                         <textarea name="network_settings[ravealert_xml_feedurl]" cols="78"><?php echo $ravealert_xml_feedurl; ?></textarea>
-                    </td>
-                </tr>
-                <tr valign="top">
-                    <th scope="row">
-                        <label for="ravealert_clearCacheCommand">
-                            Clear Cache Url
-                        </label>
-
-                    </th>
-                    <td>
-                        <input type="text" size="80" name="network_settings[ravealert_clearCacheCommand]" value="<?php echo $ravealert_clearCacheCommand; ?>"/>
                     </td>
                 </tr>
                 <tr valign="top">

@@ -68,14 +68,6 @@ function getOpenMsg()
             }
             $new_display_message = trim($returnArray["description"]);
             $class =  trim($returnArray["class"]);
-            //Clear the cache if there is a new message
-            $check = compareCurrentNewMessage($new_display_message);
-            if($check)
-            {
-                $cache_cleared = clearCache();
-                if(!$cache_cleared)
-                    error_log("ERROR: CACHE IS NOT BEING CLEARED");
-            } 
             updateCurrentMsg($new_display_message,$class);
         }
     }
@@ -118,7 +110,7 @@ function myCronFunction()
         
         $xml_data = cap_parse($url);
     
-        $getHtml = returnHtmlNClearCache($xml_data);
+        $getHtml = returnHtml($xml_data);
 
         $return_post_id = createRavePost($xml_data);
         if($return_post_id)
@@ -196,9 +188,9 @@ function returnMoreInfoMsg(){
 }
 
 /*
- *  Updates current message and clear cache
+ *  Updates current message
  */
-function returnHtmlNClearCache($new_data)
+function returnHtml($new_data)
 {
     $html = "";
     $class = ""; //Class for the display message
@@ -247,97 +239,45 @@ function returnHtmlNClearCache($new_data)
        update_site_option("ravealert_severity",(string)$severity);       
     }
 
-//Clear the cache if there is a new message
-    $check = compareCurrentNewMessage($new_display_message);
-  
-    if($check)
-    {
-        $cache_cleared = clearCache();
-        if(!$cache_cleared)
-            error_log("Rave Alert ERROR: CACHE IS NOT BEING CLEARED");
-
-
-
-
-    }
     //Updated the new message and the class variable in the database
     updateCurrentMsg($new_display_message,$class);
 
     return $html;
-}// end of returnHtmlNClearCache function
-
-function clearCache()
-{
-    $network_settings = get_site_option( 'ravealert_network_settings' );
-    $clearCacheCommand = $network_settings['ravealert_clearCacheCommand'];
-    $clearCacheCommand = base64_decode($clearCacheCommand);
-    if($clearCacheCommand)
-    {
-        $returnValue= returnContentsOfUrl($clearCacheCommand);
-        if($returnValue)
-        {
-            $returnJsonDecodedString = json_decode($returnValue,true);
-            foreach($returnJsonDecodedString as $key=>$value)
-            {
-                if($value["return_value"] != 0)
-                {
-                    error_log("\n"." Rave Alert Error: Server ".$key." returns ".$value["return_value"]." while running command ".$value["command_run"]."\n");
-                    return false;
-                }
-                else
-                {
-                    //error_log("\n"." Success: Server ".$key." returns ".$value["return_value"]." while running command ".$value["command_run"]."\n");
-                    return true;
-                }
-            }
-
-        }
-    }
-    return false;
-}
+}// end of returnHtml function
 
 /*
  * Check to see if current message matches, true if no match, false if a match
- */
-function compareCurrentNewMessage($new_message)
-{
-    $currentMsg = get_site_option('ravealert_currentMsg');
-    $classForMsg = get_site_option('ravealert_classCurrentMsg');
+ * 
+ */ 
+// function compareCurrentNewMessage($new_message)
+// {
+//     $currentMsg = get_site_option('ravealert_currentMsg');
+//     $classForMsg = get_site_option('ravealert_classCurrentMsg');
     
-    //if ravealert_currentMsg doesn't exist, then add it
-    if( !$currentMsg )
-    {
-        add_site_option( "ravealert_currentMsg", "" );
-    }
-    //if ravealert_classCurrentMsg doesn't exist, then add it
-    if( !$classForMsg )
-    {
-        add_site_option( "ravealert_classCurrentMsg", "" );
-    }
+//     //if ravealert_currentMsg doesn't exist, then add it
+//     if( !$currentMsg )
+//     {
+//         add_site_option( "ravealert_currentMsg", "" );
+//     }
+//     //if ravealert_classCurrentMsg doesn't exist, then add it
+//     if( !$classForMsg )
+//     {
+//         add_site_option( "ravealert_classCurrentMsg", "" );
+//     }
 
-    if( $currentMsg != $new_message) 
-    {
-        return true;
-    }     
-    return false;
-}
-
-/*
- * Return contents for clear cache
- */
-function returnContentsOfUrl($url)
-{
-    $arg = array ( 'method' => 'GET');
-    $output = wp_remote_request ( $url , $arg );
-    return $output["body"];
-}
+//     if( $currentMsg != $new_message) 
+//     {
+//         return true;
+//     }     
+//     return false;
+// }
 
 /*
  * Update current message
  */
 function updateCurrentMsg($new_display_message,$class)
 {
-    update_site_option("ravealert_currentMsg", $new_display_message); //Update with new message from returnHtmlNClearCache() using cap_parse xml data
+    update_site_option("ravealert_currentMsg", $new_display_message); //Update with new message from returnHtml() using cap_parse xml data
     update_site_option("ravealert_classCurrentMsg", $class);
     
 }
