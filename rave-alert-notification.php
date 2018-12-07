@@ -22,8 +22,18 @@ function enqueue_ajax() {
     $data = cap_parse($url); //retrieve alert data
     $rest_url = network_site_url('/wp-json/rave/v' . Rave_Alert_API::$rest_version) . '/alerts/';
     $more_info_message = returnMoreInfoMsg();
-    
-    $rest_variables = 'var rest_php_variables = {rest_url: "' . $rest_url . '", more_info_message: "' . $more_info_message . '"};';
+
+    //Get college open message: returns an array of description and class
+    $open_message_data = getOpenMsg();
+    $open_message_desc = $open_message_data['description'];
+    $open_message_class = $open_message_data['class'];
+
+    $rest_variables = 'var rest_php_variables = {
+                                                    rest_url: "' . $rest_url . '", 
+                                                    more_info_message: "' . $more_info_message . '",
+                                                    open_message_desc: "' . addslashes(stripslashes($open_message_desc)) . '",
+                                                    open_message_class: "' . addslashes(stripslashes($open_message_class)) . '",
+                                                };';
     wp_enqueue_script( 'rave-alert-ajax', plugin_dir_url( __FILE__ ) . 'js/rave-alert-ajax.js#asyncdeferload', array('jquery'), '1.0.0', true );
     wp_add_inline_script( 'rave-alert-ajax', $rest_variables, 'before' );
 
