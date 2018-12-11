@@ -28,11 +28,17 @@ function enqueue_ajax() {
     $open_message_desc = $open_message_data['description'];
     $open_message_class = $open_message_data['class'];
 
+    //checks if current site is the homepage
+    $current_site = get_site_url() . '/';
+    $homepage_site = network_home_url();
+    $is_homepage = ( $current_site == $homepage_site ? true : false );
+
     $rest_variables = 'var rest_php_variables = {
                                                     rest_url: "' . $rest_url . '", 
                                                     more_info_message: "' . $more_info_message . '",
                                                     open_message_desc: "' . addslashes(stripslashes($open_message_desc)) . '",
                                                     open_message_class: "' . addslashes(stripslashes($open_message_class)) . '",
+                                                    is_homepage: "' . $is_homepage . '"
                                                 };';
     wp_enqueue_script( 'rave-alert-ajax', plugin_dir_url( __FILE__ ) . 'js/rave-alert-ajax.js#asyncdeferload', array('jquery'), '1.0.0', true );
     wp_add_inline_script( 'rave-alert-ajax', $rest_variables, 'before' );

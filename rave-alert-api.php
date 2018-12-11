@@ -53,7 +53,11 @@ class Rave_Alert_API {
         $alert = self::rave_load_alert();
 
         if ( $alert ) {
-            return $alert->identifier;
+            $alert_info = array(
+                'identifier' => $alert->identifier,
+                'severity' => $alert->info->severity
+            ); 
+            return $alert_info;
         } else {
             return false;
         }
