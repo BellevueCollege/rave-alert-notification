@@ -1,4 +1,4 @@
-# Generally Igore
+# Generally Ignore
 .htaccess
 *.log
 *.iws
@@ -37,3 +37,6 @@ nbproject
 # Dreamweaver added files
 _notes
 dwsync.xml
+
+# Alerts
+alert.xml
