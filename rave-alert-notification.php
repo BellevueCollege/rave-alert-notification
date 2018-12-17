@@ -17,16 +17,8 @@ require_once('rave-alert-api.php');
  * Script calls Ajax after x amount of miliseconds to keep page updating every x miliseconds
  */
 function enqueue_ajax() {
-    $network_settings = get_site_option( 'ravealert_network_settings' );
-    $url = $network_settings['ravealert_xml_feedurl']; //get alert URL
-    $data = cap_parse($url); //retrieve alert data
     $rest_url = network_site_url('/wp-json/rave/v' . Rave_Alert_API::$rest_version) . '/alerts/';
     $more_info_message = returnMoreInfoMsg();
-
-    //Get college open message: returns an array of description and class
-    $open_message_data = getOpenMsg();
-    $open_message_desc = isset( $open_message_data['description'] ) ? $open_message_data['description'] : null;
-    $open_message_class = isset( $open_message_data['class'] ) ? $open_message_data['class'] : null;
 
     //checks if current site is the homepage
     $current_site = get_site_url() . '/';
@@ -36,8 +28,6 @@ function enqueue_ajax() {
     $rest_variables = 'var rest_php_variables = {
                                                     rest_url: "' . $rest_url . '", 
                                                     more_info_message: "' . $more_info_message . '",
-                                                    open_message_desc: "' . addslashes(stripslashes($open_message_desc)) . '",
-                                                    open_message_class: "' . addslashes(stripslashes($open_message_class)) . '",
                                                     is_homepage: "' . $is_homepage . '"
                                                 };';
     wp_enqueue_script( 'rave-alert-ajax', plugin_dir_url( __FILE__ ) . 'js/rave-alert-ajax.js#asyncdeferload', array('jquery'), '1.0.0', true );
@@ -74,7 +64,7 @@ function getOpenMsg()
         {
             if($open_message)
             {
-                $returnArray["description"] = $open_message;
+                $returnArray["description"] = stripslashes($open_message);
                 $returnArray["class"] = "alert alert-success";
             }
             else

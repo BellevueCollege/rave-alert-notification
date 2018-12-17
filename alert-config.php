@@ -111,7 +111,7 @@ function ravealert_network_settings() {
                     </th>
                     <td>
                         <textarea name="network_settings[ravealert_college_openmessage]" cols="78" ><?php echo $ravealert_college_openmessage; ?></textarea>
-                        <p><small>Accepts basic html. Message should be wrapped in a div with the class col-xs-12, or other Bootstrap formatting as needed.</small></p>
+                        <p><small>Accepts basic html and Bootstrap formatting as needed.</small></p>
                     </td>
                 </tr>
                 <tr valign="top">

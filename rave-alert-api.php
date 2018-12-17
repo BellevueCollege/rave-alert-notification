@@ -42,24 +42,45 @@ class Rave_Alert_API {
                 ),
             ),
         ) );
+
+        register_rest_route( $namespace, '/alerts/open-message', array(
+            'methods' => 'GET',
+            'callback' => array( $this, 'rave_return_college_open_msg_data'),
+            ) );
     }
 
     /*
-        * rave_check_for_alert() checks if rave_load_alert() returns an alert
-        * @return identifier of the alert if active or false
+        * rave_check_for_alert() checks if rave_load_alert() or getOpenMsg() returns an alert
+        * @return rave_alert and college_open_message response
     */
     public static function rave_check_for_alert() {
 
         $alert = self::rave_load_alert();
+        $open_msg = ( getOpenMsg() ? true : false  );
 
         if ( $alert ) {
             $alert_info = array(
-                'identifier' => $alert->identifier,
-                'severity' => $alert->info->severity
+                'rave_alert' => array (
+                    'identifier' => $alert->identifier,
+                    'severity' => $alert->info->severity,
+                    'active' => true
+                ),
+                'college_open_message' => array (
+                    'active' => false
+                ),
+                
             ); 
             return $alert_info;
         } else {
-            return false;
+            $alert_info = array(
+                'rave_alert' => array (
+                    'active' => false
+                ),
+                'college_open_message' => array (
+                    'active' => $open_msg
+                ),
+            ); 
+            return $alert_info;
         }
 
     }
@@ -137,6 +158,24 @@ class Rave_Alert_API {
         else {
             return new WP_Error( 'incorrect_alert_identifier', __('The alert identifier is incorrect or the wrong format'), array( 'status' => 400 ) );
         }          
+    }
+
+    /*
+    * rave_return_college_open_msg_data() is a callback function passed into a registered route to validate and send college open message data via REST
+    * @return WP_REST_Response college open message data in JSON, an array of college open message info
+    */
+    public static function rave_return_college_open_msg_data() {
+        $openMsg = getOpenMsg();
+
+        // If there is an open message
+        if ( $openMsg ) {
+
+            // send the data as a JSON response
+            return new WP_Rest_Response($openMsg, 200);
+
+        } else {
+            return new WP_Error( 'open_message_does_not_exist', __('The college open message you are looking for does not exist'), array( 'status' => 404 ) );
+        }         
     }
 }
 
