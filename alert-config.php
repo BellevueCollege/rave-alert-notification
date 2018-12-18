@@ -42,10 +42,10 @@ function ravealert_network_settings() {
             }
             
             //use array map and WP function to sanitize option values
-            $open_message = wp_kses_post($network_settings["ravealert_college_openmessage"]);
+            $college_wide_notif_msg = wp_kses_post($network_settings["ravealert_college_wide_notif_msg"]);
             $network_settings = array_map( 'sanitize_text_field', $network_settings );
-            //reset the college open message since it was sanitized differently to allow HTML but strip anything not allowed in WP posts
-            $network_settings["ravealert_college_openmessage"] = $open_message;
+            //reset the college-wide notification message since it was sanitized differently to allow HTML but strip anything not allowed in WP posts
+            $network_settings["ravealert_college_wide_notif_msg"] = $college_wide_notif_msg;
             
             //save option values
             update_site_option( 'ravealert_network_settings', $network_settings );
@@ -61,11 +61,11 @@ function ravealert_network_settings() {
             $network_settings = get_site_option( 'ravealert_network_settings' );
             
             //$holiday = $network_settings['holiday']; //holiday setting example from Professional WordPress
-            $high_alert = $network_settings['high_alert'];
+            $college_wide_notif = $network_settings['college_wide_notif'];
 
             $trueSelected = "";
             $falseSelected = "";
-            if($high_alert == "true")
+            if($college_wide_notif == "true")
             {
                 $trueSelected = "checked";
             }
@@ -75,8 +75,8 @@ function ravealert_network_settings() {
             }
             $ravealert_currentMsg = get_site_option('ravealert_currentMsg');
             $ravealert_severity = get_site_option('ravealert_severity');
-            echo $ravealert_severity;
-            $ravealert_college_openmessage = stripslashes($network_settings['ravealert_college_openmessage']);
+            //echo $ravealert_severity;
+            $ravealert_college_wide_notif_msg = stripslashes($network_settings['ravealert_college_wide_notif_msg']);
             $ravealert_xml_feedurl = $network_settings['ravealert_xml_feedurl'];
             
             $archive_alert = $network_settings['ravealert_do_archive'];
@@ -93,26 +93,32 @@ function ravealert_network_settings() {
             ?>
             <table class="form-table">
                 <tr valign="top">
+                    <th colspan="2"><h3>College-Wide Notification Settings</h3></th>
+                </tr>
+                <tr valign="top">
                     <th scope="row">
-                        <label for="high_alert">
-                            High Alert
+                        <label for="college_wide_notif">
+                            Activate College-Wide Notification
                         </label>
                     </th>
                     <td>
-                        <input type="radio" name="network_settings[high_alert]" value="true" <?php echo $trueSelected; ?> /> True
-                        <input type="radio" name="network_settings[high_alert]" value="false" <?php echo $falseSelected; ?>/>  False
+                        <input type="radio" name="network_settings[college_wide_notif]" value="true" <?php echo $trueSelected; ?> /> True
+                        <input type="radio" name="network_settings[college_wide_notif]" value="false" <?php echo $falseSelected; ?>/>  False
                     </td>
                 </tr>
                 <tr valign="top">
                     <th scope="row">
-                        <label for="ravealert_college_openmessage">
-                            College Open Message
+                        <label for="ravealert_college_wide_notif_msg">
+                            College-Wide Notification Message
                         </label>
                     </th>
                     <td>
-                        <textarea name="network_settings[ravealert_college_openmessage]" cols="78" ><?php echo $ravealert_college_openmessage; ?></textarea>
+                        <textarea name="network_settings[ravealert_college_wide_notif_msg]" cols="78" ><?php echo $ravealert_college_wide_notif_msg; ?></textarea>
                         <p><small>Accepts basic html and Bootstrap formatting as needed.</small></p>
                     </td>
+                </tr>
+                <tr valign="top">
+                    <th colspan="2"><h3>Rave Alert Notification Settings</h3></th>
                 </tr>
                 <tr valign="top">
                     <th scope="row">
@@ -157,22 +163,23 @@ function ravealert_network_settings() {
                     </td>
                 </tr>
                 <tr valign="top">
+                    <th colspan="2"><h3>Notification Status</h3></th>
+                </tr>
+                <tr valign="top">
                     <th scope="row">
                         <label>
                             Rave Alert Severity
                         </label>
-
                     </th>
                     <td>
                         <?php echo stripslashes($ravealert_severity); ?>
                     </td>
                 </tr>
-                <tr valign="top">
+                <tr valign="top"> 
                     <th scope="row">
                         <label>
                             Latest Message Displayed
                         </label>
-
                     </th>
                     <td>
                         <?php echo stripslashes($ravealert_currentMsg); ?>

@@ -43,20 +43,20 @@ class Rave_Alert_API {
             ),
         ) );
 
-        register_rest_route( $namespace, '/alerts/open-message', array(
+        register_rest_route( $namespace, '/alerts/college-wide-notif-msg', array(
             'methods' => 'GET',
-            'callback' => array( $this, 'rave_return_college_open_msg_data'),
+            'callback' => array( $this, 'rave_return_college_wide_notif_msg_data'),
             ) );
     }
 
     /*
-        * rave_check_for_alert() checks if rave_load_alert() or getOpenMsg() returns an alert
-        * @return rave_alert and college_open_message response
+        * rave_check_for_alert() checks if rave_load_alert() or getCollegeWideNotifMsg() returns an alert
+        * @return rave_alert and college_wide_notif_msg response
     */
     public static function rave_check_for_alert() {
 
         $alert = self::rave_load_alert();
-        $open_msg = ( getOpenMsg() ? true : false  );
+        $is_college_wide_notif_msg = ( getCollegeWideNotifMsg() ? true : false  );
 
         if ( $alert ) {
             $alert_info = array(
@@ -65,7 +65,7 @@ class Rave_Alert_API {
                     'severity' => $alert->info->severity,
                     'active' => true
                 ),
-                'college_open_message' => array (
+                'college_wide_notif_msg' => array (
                     'active' => false
                 ),
                 
@@ -76,8 +76,8 @@ class Rave_Alert_API {
                 'rave_alert' => array (
                     'active' => false
                 ),
-                'college_open_message' => array (
-                    'active' => $open_msg
+                'college_wide_notif_msg' => array (
+                    'active' => $is_college_wide_notif_msg
                 ),
             ); 
             return $alert_info;
@@ -161,20 +161,20 @@ class Rave_Alert_API {
     }
 
     /*
-    * rave_return_college_open_msg_data() is a callback function passed into a registered route to validate and send college open message data via REST
-    * @return WP_REST_Response college open message data in JSON, an array of college open message info
+    * rave_return_college_wide_notif_msg_data() is a callback function passed into a registered route to validate and send college wide notification message data via REST
+    * @return WP_REST_Response college wide notification message data in JSON, an array of message info
     */
-    public static function rave_return_college_open_msg_data() {
-        $openMsg = getOpenMsg();
+    public static function rave_return_college_wide_notif_msg_data() {
+        $college_wide_notif_msg = getCollegeWideNotifMsg();
 
-        // If there is an open message
-        if ( $openMsg ) {
+        // If there is a message
+        if ( $college_wide_notif_msg ) {
 
             // send the data as a JSON response
-            return new WP_Rest_Response($openMsg, 200);
+            return new WP_Rest_Response($college_wide_notif_msg, 200);
 
         } else {
-            return new WP_Error( 'open_message_does_not_exist', __('The college open message you are looking for does not exist'), array( 'status' => 404 ) );
+            return new WP_Error( 'college_wide_notif_msg_does_not_exist', __('The college-wide notification message you are looking for does not exist'), array( 'status' => 404 ) );
         }         
     }
 }

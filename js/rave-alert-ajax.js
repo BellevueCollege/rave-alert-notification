@@ -12,11 +12,13 @@ jQuery( document ).ready( function( $ ) {
             method: 'GET',
             url: rest_php_variables['rest_url'],
         }).done(function (alert_info) {
+            console.log(alert_info);
             /* *******************
             * CAP Rave Alert
             * ********************/ 
             // verify data (identifier) returned is a string 
             if ( typeof alert_info['rave_alert'].identifier == 'string' ) {
+                console.log('active rave alert');
 
                 var more_info_message = rest_php_variables['more_info_message'];
 
@@ -32,6 +34,7 @@ jQuery( document ).ready( function( $ ) {
                         method: 'GET',
                             url: rest_php_variables['rest_url'] + alert_info['rave_alert'].identifier,
                     }).done(function (data) {
+                        console.log(data);
                         var output = '';
                         // verify data returned is JSON 
                         if (typeof data == 'object') {
@@ -54,43 +57,45 @@ jQuery( document ).ready( function( $ ) {
 
             } else { // if string is not returned
                 //check if an alert exists and remove it
-                if ($('#ravealertheader').length == 1 && alert_info['college_open_message'].active == false ){
+                if ($('#ravealertheader').length == 1 && alert_info['college_wide_notif_msg'].active == false ){
                     $('#ravealertheader').remove();
                 }
             }
 
             /* *******************
-            * College open message
+            * College-wide notification message
             * ********************/ 
-            if ( alert_info['college_open_message'].active == true) {
+            if ( alert_info['college_wide_notif_msg'].active == true) {
+                console.log('active college alert');
 
                 //check if #ravealertheader does not exist in <body>
                 if ($('#ravealertheader').length == 0) {
                     $('body').prepend('<div id="ravealertheader" class="container alert"><div class="row"><div class="col-sm-2"><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span></div><div class="col-sm-10"><div id="ravealertmessage"><h2 id="ravealertevent">' + 'Loading Alert...' + '</h2><p>' + 'Loading headline...' + ' ' + more_info_message + '</p></div></div></div></div>');
                 }
 
-                //Get open message data
+                //Get college-wide notification message data
                 $.ajax({
                     method: 'GET',
-                        url: rest_php_variables['rest_url'] + 'open-message',
+                        url: rest_php_variables['rest_url'] + 'college-wide-notif-msg',
                 }).done(function (data) {
-                    var open_output = '';
+                    console.log(data);
+                    var msg_output = '';
                     if (typeof data == 'object') {
                         var new_description = data['description'];
                         var new_class = data['class'];
-                        open_output += '<div id="ravealertheader" class="container ' + new_class + ' open-msg"><div class="row"><div class="col-sm-2"><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span></div><div class="col-sm-10"><div id="ravealertmessage"><p>' + new_description + '</p></div></div></div></div>';
+                        msg_output += '<div id="ravealertheader" class="container ' + new_class + ' college-wide-notif-msg"><div class="row"><div class="col-sm-2"><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span></div><div class="col-sm-10"><div id="ravealertmessage"><p>' + new_description + '</p></div></div></div></div>';
                     }
                     //Replace #ravealertheader with new output
-                    $('#ravealertheader').replaceWith( open_output );
+                    $('#ravealertheader').replaceWith( msg_output );
                 }).fail(function(error) {
-                    console.log('Error calling RAVE REST API OPEN MESSAGE: ');
+                    console.log('Error calling RAVE REST API COLLEGE-WIDE NOTIFICATION MESSAGE: ');
                     console.log(error);
                 });
 
-            } else { // open message isn't active
+            } else { // college-wide notif message isn't active
                 //check if an alert exists and remove it
-                if ($('#ravealertheader.open-msg').length == 1 && alert_info['rave_alert'] == false){
-                    $('#ravealertheader.open-msg').remove();
+                if ($('#ravealertheader.college-wide-notif-msg').length == 1 && alert_info['rave_alert'] == false){
+                    $('#ravealertheader.college-wide-notif-msg').remove();
                 }
             }
 

@@ -37,34 +37,34 @@ function enqueue_ajax() {
 add_action( 'wp_enqueue_scripts', 'enqueue_ajax' );
 
 /*
- * Putting the College open message functionality to run outside of cron job
+ * Putting the College-wide notification message functionality to run outside of cron job
  */
 
 
-//add_action('wp_footer','getOpenMsg',100);
-$new_data = getOpenMsg();
+//add_action('wp_footer','getCollegeWideNotifMsg',100);
+$new_data = getCollegeWideNotifMsg();
 //error_log(print_r(get_current_site(),true));
 
 /*
- * Updates the current message if xml feed description is empty and high alert flag is set to true
+ * Updates the current message if xml feed description is empty and college wide notification alert is activated/set to true
  */
 
-function getOpenMsg()
+function getCollegeWideNotifMsg()
 {
     $network_settings = get_site_option( 'ravealert_network_settings' );
-    $high_alert = $network_settings['high_alert'];
-    $open_message = $network_settings['ravealert_college_openmessage'];
+    $college_wide_notif = $network_settings['college_wide_notif'];
+    $college_wide_notif_msg = $network_settings['ravealert_college_wide_notif_msg'];
     $url = $network_settings['ravealert_xml_feedurl'];
     $new_data = cap_parse($url);
 
     $returnArray = array();
     if(!isset($new_data) || !isset($new_data["description"]) || empty($new_data["description"])) // if the description is empty or not set
     {
-        if($high_alert == "true")
+        if($college_wide_notif == "true")
         {
-            if($open_message)
+            if($college_wide_notif_msg)
             {
-                $returnArray["description"] = stripslashes($open_message);
+                $returnArray["description"] = stripslashes($college_wide_notif_msg);
                 $returnArray["class"] = "alert alert-success";
             }
             else
@@ -79,7 +79,7 @@ function getOpenMsg()
     }
 
     return $returnArray;
-}// End of getOpenMsg function
+}// End of getCollegeWideNotifMsg function
 
 /*
  *	Cron Job for RaveAlert.
