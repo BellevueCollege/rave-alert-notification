@@ -12,13 +12,11 @@ jQuery( document ).ready( function( $ ) {
             method: 'GET',
             url: rest_php_variables['rest_url'],
         }).done(function (alert_info) {
-            console.log(alert_info);
             /* *******************
             * CAP Rave Alert
             * ********************/ 
             // verify data (identifier) returned is a string 
             if ( typeof alert_info['rave_alert'].identifier == 'string' ) {
-                console.log('active rave alert');
 
                 var more_info_message = rest_php_variables['more_info_message'];
 
@@ -34,7 +32,6 @@ jQuery( document ).ready( function( $ ) {
                         method: 'GET',
                             url: rest_php_variables['rest_url'] + alert_info['rave_alert'].identifier,
                     }).done(function (data) {
-                        console.log(data);
                         var output = '';
                         // verify data returned is JSON 
                         if (typeof data == 'object') {
@@ -66,7 +63,6 @@ jQuery( document ).ready( function( $ ) {
             * College-wide notification message
             * ********************/ 
             if ( alert_info['college_wide_notif_msg'].active == true) {
-                console.log('active college alert');
 
                 //check if #ravealertheader does not exist in <body>
                 if ($('#ravealertheader').length == 0) {
@@ -78,7 +74,6 @@ jQuery( document ).ready( function( $ ) {
                     method: 'GET',
                         url: rest_php_variables['rest_url'] + 'college-wide-notif-msg',
                 }).done(function (data) {
-                    console.log(data);
                     var msg_output = '';
                     if (typeof data == 'object') {
                         var new_description = data['description'];
