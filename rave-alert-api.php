@@ -121,7 +121,7 @@ class Rave_Alert_API {
         $parameters = $request->get_url_params(); //get the URL parameters from the request
         $rave_identifier = $parameters['identifier']; //get only the identifier passed into URL parameters from the registered route
         
-        if ( preg_match( '/^(\d{22})$/', $rave_identifier ) ) {
+        if ( preg_match( '/^(\d*)$/', $rave_identifier ) ) {
             $alert = self::rave_load_alert();
 
             // If the identifiers match
