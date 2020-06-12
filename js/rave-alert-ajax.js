@@ -5,11 +5,10 @@
 
 
 jQuery( document ).ready( function( $ ) {
-    // Get minutes of current time for cache busting
-    var current_time = new Date();
-    var current_minutes = current_time.getMinutes(); // Should be a number, like 12, or 59
     (function callAjax() {
-
+        // Get minutes of current time for cache busting
+        var current_time = new Date();
+        var current_minutes = current_time.getMinutes(); // Should be a number, like 12, or 59
         $.ajax({
             method: 'GET',
             url: rest_php_variables['rest_url'] + '?' + current_minutes,
