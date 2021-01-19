@@ -29,7 +29,8 @@ class Rave_Alert_API {
         register_rest_route( $namespace, '/alerts/', array(
         'methods' => 'GET',
         'callback' => array( $this, 'rave_check_for_alert'),
-        ) );
+        'permission_callback' => '__return_true',
+        ));
 
         register_rest_route( $namespace, '/alerts/(?P<identifier>\d+)', array(
         'methods' => 'GET',
@@ -41,6 +42,7 @@ class Rave_Alert_API {
                     }
                 ),
             ),
+        'permission_callback' => '__return_true',
         ) );
     }
 
