@@ -198,4 +198,3 @@ function ravealert_network_settings() {
     </div>
     <?php
 }//settings page function
-?>
