@@ -74,6 +74,6 @@ class CAP_Alert {
 
 	// This function should probably go somewhere else...
 	public static function clear_kinsta_cache() {
-		@file_get_contents( network_home_url() . 'kinsta-clear-cache/wp-json/rave/v1/alerts/' );
+		// @file_get_contents( network_home_url() . 'kinsta-clear-cache/wp-json/rave/v1/alerts/' ); -- non-functional at this time. Cache is cleared via a cachebuster query
 	}
 } 
