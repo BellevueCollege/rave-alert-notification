@@ -4,7 +4,7 @@
 
 
 ## Description
-This plugin parses the CAP(Common Access Protocol) xml feed to extract the description and applies the logic to calculate the time range for which the message will be displayed.
+This plugin parses the CAP (Common Alert Protocol) xml feed to extract the description and applies the logic to calculate the time range for which the message will be displayed.
 It adds the message right after the body tag. In addition to displaying the message, it also clears the cache and creates a post of the message on the specified website in the configuration.
 
 

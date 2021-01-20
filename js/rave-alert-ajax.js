@@ -1,5 +1,5 @@
 /*
-* Pull data from xml feed
+* Pull emergency alert data from REST endpoint
 *
 */
 
@@ -8,10 +8,12 @@ jQuery( document ).ready( function( $ ) {
     (function callAjax() {
         // Get minutes of current time for cache busting
         var current_time = new Date();
-        var current_minutes = current_time.getMinutes(); // Should be a number, like 12, or 59
+        var current_hours = current_time.getUTCHours();
+        var current_minutes = current_time.getUTCMinutes();
+        var cachebuster = current_hours +'-'+ current_minutes;
         $.ajax({
             method: 'GET',
-            url: rest_php_variables['rest_url'] + '?' + current_minutes,
+            url: rest_php_variables['rest_url'] + '?' + cachebuster,
         }).done(function (alert_info) {
 
             // If there is an Alert via CAP XML
@@ -30,7 +32,7 @@ jQuery( document ).ready( function( $ ) {
                     
                     $.ajax({
                         method: 'GET',
-                            url: rest_php_variables['rest_url'] + alert_info['identifier'] + '?' + current_minutes,
+                            url: rest_php_variables['rest_url'] + alert_info['identifier'] + '?' + cachebuster,
                     }).done(function (data) {
 
                         var output = '';

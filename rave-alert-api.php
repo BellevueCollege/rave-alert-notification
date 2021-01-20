@@ -29,7 +29,8 @@ class Rave_Alert_API {
         register_rest_route( $namespace, '/alerts/', array(
         'methods' => 'GET',
         'callback' => array( $this, 'rave_check_for_alert'),
-        ) );
+        'permission_callback' => '__return_true',
+        ));
 
         register_rest_route( $namespace, '/alerts/(?P<identifier>\d+)', array(
         'methods' => 'GET',
@@ -41,6 +42,7 @@ class Rave_Alert_API {
                     }
                 ),
             ),
+        'permission_callback' => '__return_true',
         ) );
     }
 
@@ -72,7 +74,9 @@ class Rave_Alert_API {
 
         $network_settings = get_site_option( 'ravealert_network_settings' );
         $url = $network_settings['ravealert_xml_feedurl'];
-        $data = cap_parse($url);
+
+        $bc_rave_alert = new CAP_Alert();
+        $data = $bc_rave_alert->get_db_alert();
 
         //check if alert is active: if $data returns empty it's false, if not empty then true
         $rest_valid_id = ( !empty($data) ? true : false );
@@ -88,19 +92,19 @@ class Rave_Alert_API {
             
                 //construct the alert
                 $alert = array(
-                    'identifier' => $data['identifier']->__toString(),
+                    'identifier' => $data['identifier'],
                     'info' => array(
-                        'event' => $data['event']->__toString(),
-                        'severity' => $data['severity']->__toString(),
-                        'headline' => $data['headline']->__toString(),
-                        'description' => $data['description']->__toString(),
+                        'event' => $data['event'],
+                        'severity' => $data['severity'],
+                        'headline' => $data['headline'],
+                        'description' => $data['description'],
                         'class' => $data['class'] //is a string
                     )
                 );
                 $alert_json = json_encode($alert);
 
-                //set the transient for 60 seconds
-                $set_transient = set_transient('rave_alert_data', $alert_json, 60);
+                //set the transient for 10 seconds - this is simply an extra level of caching on top of the option. Probably not needed.
+                $set_transient = set_transient('rave_alert_data', $alert_json, 10);
 
                 return json_decode($alert_json);
  
