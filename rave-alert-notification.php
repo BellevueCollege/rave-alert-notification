@@ -48,36 +48,45 @@ function bc_rave_enqueue_ajax() {
 add_action( 'wp_enqueue_scripts', 'bc_rave_enqueue_ajax' );
 
 
-/*
- *	Cron Job for RaveAlert.
+/**
+ * Create a New Cron Interval for Every 1 Minute
+ * 
+ * @param array $interval
+ * @return array
  */
-add_filter('cron_schedules', 'bc_rave_interval');
-
-// add once every 1 minute interval to wp schedules
 function bc_rave_interval( $interval ) {
-	$interval['minutes_1'] = array('interval' => 1*60, 'display' => 'Once every 1 minute');
+	$interval['minutes_1'] = array(
+		'interval' => 1 * 60,
+		'display' => 'Once every 1 minute'
+	);
 	return $interval;
 }
+add_filter('cron_schedules', 'bc_rave_interval');
 
+/**
+ * Schedule Cron Event on the Main Site Only
+ */
+if ( is_main_site() ) {
+	if ( ! wp_next_scheduled( 'rave_cron' ) ) { 
 if ( ! wp_next_scheduled( 'rave_cron' ) ) { 
+	if ( ! wp_next_scheduled( 'rave_cron' ) ) { 
+		wp_schedule_event( time(), 'minutes_1', 'rave_cron' ); 
 	wp_schedule_event( time(), 'minutes_1', 'rave_cron' ); 
+		wp_schedule_event( time(), 'minutes_1', 'rave_cron' ); 
+	}
+	add_action( 'rave_cron', 'bc_rave_cron' );
 }
 
-add_action( 'rave_cron', 'bc_rave_cron' );
-
+/**
+ * Cron Event
+ */
 function bc_rave_cron() {
-	
 	if ( is_main_site() ) {
-		//error_log("############################ CRON TAB is Running #######################");
-
-		$bc_rave_alert = new CAP_Alert();
-		$alert_data = $bc_rave_alert->get_alert();
-		$response = $bc_rave_alert->store_db_alert( $alert_data );
+		$alert      = new CAP_Alert();
+		$alert_data = $alert->get_alert();
+		$response   = $alert->store_db_alert( $alert_data );
 
 		$return_post_id = bc_rave_create_rave_post( $alert_data );
-
-		wp_clear_scheduled_hook( 'rave_cron' );
-		//error_log("############################ CRON TAB is Finished #######################");
 	}
 }
 
