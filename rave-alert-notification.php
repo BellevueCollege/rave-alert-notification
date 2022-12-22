@@ -92,20 +92,29 @@ function bc_rave_cron() {
 
 /* 
  * Return 'More information' link
+ * 
+ * TO DO: Add more specific link, and make this link be based on how alerts are archived. 
  */
 
-function bc_rave_return_more_info_link(){
-	/* Load settings */
-	$network_settings = get_site_option( 'ravealert_network_settings' );
-	$ravealert_do_archive = $network_settings['ravealert_do_archive'];
-	$more_info_site_id = $network_settings['ravealert_archive_site'];
+function bc_rave_return_more_info_link() {
 
-	$more_info_message = "";
+	// Load Settings.
+	global $bc_rave_network_settings;
 
-	/* Check if archive site is set */
-	if ( $more_info_site_id != "" && $ravealert_do_archive == "true") {
+	// Check if archive is enabled.
+	$do_archive = "true" === $bc_rave_network_settings['ravealert_do_archive'] ? true : false;
+	$archive_type = $bc_rave_network_settings['ravealert_archive_type'];
+	$more_info_site_id = "post" === $archive_type ? $bc_rave_network_settings['ravealert_archive_site'] : null;
+
+
+	// Exit if Archive is Not Enabled or is Misconfigured.
+	if ( ( '' === $more_info_site_id && 'post' === $archive_type ) || ! $do_archive ) {
+		return '';
+	}
+
+	if ( 'post' === $archive_type ) {
 		$more_info_site = get_blog_details( $more_info_site_id )->path;
-		$more_info_message = "<a href='" . $more_info_site . "'>More Information.</a>";
+		return $more_info_site;
 	}
 
 	return $more_info_message;
