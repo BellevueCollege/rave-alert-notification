@@ -12,6 +12,7 @@ Text Domain: rave-alert-notification
 
 // Load Settings
 $bc_rave_network_settings = get_site_option( 'ravealert_network_settings' );
+$bc_rave_network_settings = is_array( $bc_rave_network_settings ) ? $bc_rave_network_settings : array();
 
 // Load Classes
 require_once( 'classes/class-cap-alert.php' );
@@ -134,6 +135,11 @@ function bc_rave_return_more_info_link() {
 		return $more_info_site;
 	}
 
+	if ( 'oho' === $archive_type ) {
+		$more_info_site = network_site_url('/bellevue-news');
+		return $more_info_site;
+	}
+
 	return '';
 }
 
@@ -160,27 +166,42 @@ function bc_rave_create_rave_post( $xml_data ) {
 		$bc_rave_network_settings = get_site_option( 'ravealert_network_settings' );
 		$check_to_archive = $bc_rave_network_settings['ravealert_do_archive'];
 		$archive_type     = $bc_rave_network_settings['ravealert_archive_type'];
-		$archive_blog_id  = "cpt" === $archive_type ? SITE_ID_CURRENT_SITE : $bc_rave_network_settings['ravealert_archive_site'];
+		$archive_blog_id  = "cpt" === $archive_type || "oho" === $archive_type ? SITE_ID_CURRENT_SITE : $bc_rave_network_settings['ravealert_archive_site'];
 		global $wpdb;
 		if ( "true" === $check_to_archive ) {
 			switch_to_blog( $archive_blog_id );
 				global $wpdb;
 
+				$post_type = "cpt" === $archive_type ? 'bc-alert' : 
+					( 'oho' === $archive_type ? $bc_rave_network_settings['ravealert_oho_news_cpt'] : 'post' );
+
 				$query = new WP_Query(
-					array( 'name' => $identifier )
+					array(
+						'name' => $identifier,
+						'post_type' => $post_type,
+					)
 				);
 
 				if ( $query->post_count === 0 ) {
 					$description = "<p>$headline</p><!--more--><p>$description</p>";
 					$post_args = array(
-						'post_name'   => $identifier,
-						'post_title'  => $event,
+						'post_name'     => $identifier,
+						'post_title'    => $event,
 						'post_content'  => $description,
 						'post_status'   => 'publish',
 						'post_author'   => 1,
-						'post_type'   => "cpt" === $archive_type ? 'bc-alert' : 'post',
+						'post_type'     => $post_type,
 					);
 					$post_return_value = wp_insert_post( $post_args );
+
+					// If successful, populate custom fields for OHO News CPT
+					if ( 'oho' === $archive_type && is_int( $post_return_value ) && $post_return_value > 0 ) {
+						update_field('publish_date', current_time( 'Y-m-d H:i:s' ), $post_return_value);
+						update_field('summary', $headline, $post_return_value);
+						//update_field('news_type', (int)$bc_rave_network_settings['ravealert_oho_news_term'], $post_return_value);
+						wp_set_post_terms( $post_return_value, (int)$bc_rave_network_settings['ravealert_oho_news_term'], 'news_type' );
+
+					}
 				}
 			restore_current_blog();
 		}

@@ -95,6 +95,8 @@ function ravealert_network_settings() {
 				$ravealert_archive_type_post = "checked";
 			} else if ( $archive_type === "cpt" ) {
 				$ravealert_archive_type_cpt = "checked";
+			} else if ( $archive_type === "oho" ) {
+				$ravealert_archive_type_oho = "checked";
 			}
 
 			wp_nonce_field( 'rave_save_network_settings', 'rave_settings_save' );
@@ -156,7 +158,9 @@ function ravealert_network_settings() {
 					</th>
 					<td>
 						<label for="ravealert_archive_type_post"><input type="radio" id="ravealert_archive_type_post" name="network_settings[ravealert_archive_type]" value="post" <?php echo $ravealert_archive_type_post ?? ""; ?> /> Create Posts on a Site in the Network</label><br>
-						<label for="ravealert_archive_type_cpt"><input type="radio" id="ravealert_archive_type_cpt" name="network_settings[ravealert_archive_type]" value="cpt" <?php echo $ravealert_archive_type_cpt ?? ""; ?>/> Enable CPT for Alerts on Root Site in Network</label>
+						<label for="ravealert_archive_type_cpt"><input type="radio" id="ravealert_archive_type_cpt" name="network_settings[ravealert_archive_type]" value="cpt" <?php echo $ravealert_archive_type_cpt ?? ""; ?>/> Enable CPT for Alerts on Root Site in Network</label><br>
+						<label for="ravealert_archive_type_oho"><input type="radio" id="ravealert_archive_type_oho" name="network_settings[ravealert_archive_type]" value="oho" <?php echo $ravealert_archive_type_oho ?? ""; ?>/> Post to News site in OHO Theme</label>
+
 						<p><small>If archiving is enabled, how do you want alerts to be archived?</small></p>
 					</td>
 					
@@ -183,6 +187,67 @@ function ravealert_network_settings() {
 						<?php } ?>
 						</select>
 						<p><small>If archiving to Posts is enabled, which site should they be sent to?</small></p>
+					</td>
+				</tr>
+			</table>
+			<h3>OHO News Site Configuration</h3>
+			<p>If you chose to post to the News site in the OHO theme, you will need to configure the following settings.</p>
+			<table class="form-table">
+				<tr valign="top">
+					<th scope="row">
+						<label for="ravealert_oho_news_cpt">
+							OHO News CPT
+						</label>
+					</th>
+					<td>
+						<select name="network_settings[ravealert_oho_news_cpt]" id="ravealert_oho_news_cpt">
+							<option value=""></option>
+							<?php 
+							switch_to_blog(SITE_ID_CURRENT_SITE);
+
+							$cpts = get_post_types( array( 'public' => true, '_builtin' => false ), 'names', 'and' );
+							foreach ( $cpts as $cpt ) {
+								$site_selected = "";
+								if ( (null !== $bc_rave_network_settings["ravealert_oho_news_cpt"]) && $cpt === $bc_rave_network_settings["ravealert_oho_news_cpt"]) { 
+									$site_selected = "selected";
+								}
+									
+								?>
+								<option value="<?php echo $cpt; ?>" <?php echo $site_selected; ?>><?php echo $cpt; ?></option>
+							<?php 
+							} 
+							restore_current_blog();
+							?>
+						</select>
+						<p><small>Which CPT is the News CPT in the OHO theme?</small></p>
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="ravealert_oho_news_term">
+							Alert Term
+						</label>
+					</th>
+					<td>
+						<select name="network_settings[ravealert_oho_news_term]" id="ravealert_oho_news_term">
+							<option value=""></option>
+							<?php 
+							switch_to_blog(SITE_ID_CURRENT_SITE);
+
+							$terms = get_terms( array( 'taxonomy' => 'news_type', 'hide_empty' => false, 'fields' => 'id=>name' ) );
+							foreach ( $terms as $term_id => $term_name ) {
+								$term_selected = "";
+								if ( (null !== $bc_rave_network_settings["ravealert_oho_news_term"]) && (String)$term_id === $bc_rave_network_settings["ravealert_oho_news_term"]) { 
+									$term_selected = "selected";
+								}
+								?>
+								<option value="<?php echo $term_id; ?>" <?php echo $term_selected; ?>><?php echo $term_name; ?></option>
+							<?php
+							}
+							restore_current_blog();
+							?>
+						</select>
+						<p><small>Which Term should be used in the News Type taxonomy?</small></p>
 					</td>
 				</tr>
 			</table>

@@ -1,5 +1,5 @@
 <alert xmlns="urn:oasis:names:tc:emergency:cap:1.2">
-    <identifier>16716614190001369317197</identifier>
+    <identifier>16716614190001369317111</identifier>
     <sender>BellevueCollegeAlerts</sender>
     <sent>2022-12-21T14:23:39-08:00</sent>
     <status>Test</status>
@@ -8,13 +8,13 @@
     <info>
     <language>en-US</language>
     <category>Other</category>
-    <event>TEST OF EMERGENCY ALERT SYSTEM!!</event>
+    <event>TEST OF EMERGENCY ALERT SYSTEM!2!</event>
     <urgency>Immediate</urgency>
     <severity>Extreme</severity>
     <certainty>Observed</certainty>
     <effective>2022-12-21T15:52:00-08:00</effective>
     <onset>2022-12-21T15:52:00-08:00</onset>
-    <expires>2022-12-22T14:33:39-08:00</expires>
+    <expires>2022-12-23T14:33:39-08:00</expires>
     <senderName>BellevueCollegeAlerts</senderName>
     <headline>[HEADLINE] This is a test of the 'extreme' severity alert. This is ONLY A TEST.</headline>
     <description>[DESC] This is a test of the 'extreme' severity alert. This is ONLY A TEST.</description>
