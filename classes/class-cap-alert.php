@@ -6,8 +6,10 @@ class CAP_Alert {
 	protected $option_name = 'bc_rave_alert';
 
 	function __construct() {
-		$network_settings = get_site_option( 'ravealert_network_settings' );
-		$url = $network_settings['ravealert_xml_feedurl']; 
+		$bc_rave_network_settings = get_site_option( 'ravealert_network_settings' );
+
+		// Construct the URL from the network settings and the UNIX timestamp
+		$url = $bc_rave_network_settings['ravealert_xml_feedurl'] . '?t=' . time();
 		$this->url = $url;
 	}
 
@@ -33,8 +35,8 @@ class CAP_Alert {
 			//Get current time
 			$time = time();
 
-			//Test to see if current time is between effective time and expire time
-			if ( strtolower( $msg_type ) != 'cancel' && ( $time > $sent ) && ( $time < $expires ) ) {
+			//Test to see if current time is between effective time and expire time, and alert hasn't been cancelled
+			if ( 'cancel' !== strtolower( $msg_type ) && ( $time > $sent ) && ( $time < $expires ) ) {
 				$alert = array();
 
 				//If true, print HTML using event and description info
@@ -44,7 +46,7 @@ class CAP_Alert {
 				$alert["event"]       = $event;
 				$alert["severity"]    = $severity;
 
-				if ( strtolower( $severity ) === 'minor' ) {
+				if ( 'minor' === strtolower( $severity ) ) {
 					$alert["class"]   = "alert alert-info";
 				} else {
 					$alert["class"]   = "alert alert-danger";
@@ -55,12 +57,13 @@ class CAP_Alert {
 		return false;
 	}
 
+
 	public function store_db_alert( $alert ) {
 		if ( add_site_option( $this->option_name, $alert ) ) {
-			self::clear_kinsta_cache();
+			// self::clear_kinsta_cache();
 			return 'Option Created';
 		} elseif ( update_site_option( $this->option_name, $alert ) ) {
-			self::clear_kinsta_cache();
+			// self::clear_kinsta_cache();
 			return 'Option Updated';
 		} else {
 			return 'Option Not Updated';
