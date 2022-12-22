@@ -9,10 +9,12 @@ Author URI: https://www.bellevuecollege.edu
 GitHub Plugin URI: bellevuecollege/rave-alert-notification
 */
 
-require_once('classes/class-cap-alert.php');
-require_once('classes/class-open-message.php');
-require_once('alert-config.php');
-require_once('rave-alert-api.php');
+/**
+ * Create BC Alert CPT if archive type is set to CPT in the network settings
+ */
+if ( is_main_site() && 'true' === $bc_rave_network_settings['ravealert_do_archive'] && 'cpt' === $bc_rave_network_settings['ravealert_archive_type'] ) {
+	require_once('post-types/bc-alert.php');
+}
 
 /*
  * Enqueue Ajax scripts
@@ -103,7 +105,7 @@ function bc_rave_return_more_info_link(){
 
 
 /*
-* Create new post
+* Create New Post
 */
 function bc_rave_create_rave_post( $xml_data ) {
 	$post_return_value = 0;
@@ -116,38 +118,37 @@ function bc_rave_create_rave_post( $xml_data ) {
 		 isset( $xml_data["description"] ) && 
 		 isset( $xml_data["identifier"] ) ) {
 
-		$event = $xml_data["event"];
-		$headline = $xml_data["headline"];
-		$description = $xml_data["description"];
-		$identifier = $xml_data["identifier"];
-		$network_settings = get_site_option( 'ravealert_network_settings' );
-		$check_to_archive = $network_settings['ravealert_do_archive'];
-		$archive_blog_id = $network_settings['ravealert_archive_site'];
-		
-		if ( $check_to_archive == "true" ) {
+		$event            = $xml_data["event"];
+		$headline         = $xml_data["headline"];
+		$description      = $xml_data["description"];
+		$identifier       = $xml_data["identifier"];
+		$bc_rave_network_settings = get_site_option( 'ravealert_network_settings' );
+		$check_to_archive = $bc_rave_network_settings['ravealert_do_archive'];
+		$archive_type     = $bc_rave_network_settings['ravealert_archive_type'];
+		$archive_blog_id  = "cpt" === $archive_type ? SITE_ID_CURRENT_SITE : $bc_rave_network_settings['ravealert_archive_site'];
+		global $wpdb;
+		if ( "true" === $check_to_archive ) {
 			switch_to_blog( $archive_blog_id );
-			global $wpdb;
+				global $wpdb;
 
-			//Check if slug exists
-			//error_log('Does Slug Exist?');
-			$query = new WP_Query( array( 'name' => $identifier ) ); if ( $query->post_count === 0 ) {// I am unique!}
+				$query = new WP_Query(
+					array( 'name' => $identifier )
+				);
 
-			$description = $headline . "<!--more-->" . $description;
-			$post_args = array(
-				'post_name'   => $identifier,
-				'post_title'  => $event,
-				'post_content'  => $description,
-				'post_status'   => 'publish',
-				'post_author'   => 1,
-			);
-			$post_return_value = wp_insert_post( $post_args );
-			//error_log('POST CREATED');
-
+				if ( $query->post_count === 0 ) {
+					$description = $headline . "<!--more-->" . $description;
+					$post_args = array(
+						'post_name'   => $identifier,
+						'post_title'  => $event,
+						'post_content'  => $description,
+						'post_status'   => 'publish',
+						'post_author'   => 1,
+						'post_type'   => "cpt" === $archive_type ? 'bc-alert' : 'post',
+					);
+					$post_return_value = wp_insert_post( $post_args );
+				}
+			restore_current_blog();
 		}
-		restore_current_blog();
-
-		}
-
 	}
 
 	return $post_return_value;
