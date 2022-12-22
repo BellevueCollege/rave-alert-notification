@@ -129,7 +129,12 @@ function bc_rave_return_more_info_link() {
 		return $more_info_site;
 	}
 
-	return $more_info_message;
+	if ( 'cpt' === $archive_type ) {
+		$more_info_site = network_site_url('/blog/bc-alert');
+		return $more_info_site;
+	}
+
+	return '';
 }
 
 
@@ -166,7 +171,7 @@ function bc_rave_create_rave_post( $xml_data ) {
 				);
 
 				if ( $query->post_count === 0 ) {
-					$description = $headline . "<!--more-->" . $description;
+					$description = "<p>$headline</p><!--more--><p>$description</p>";
 					$post_args = array(
 						'post_name'   => $identifier,
 						'post_title'  => $event,
