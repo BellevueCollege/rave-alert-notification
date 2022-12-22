@@ -7,7 +7,24 @@ Author: Bellevue College IT Services
 Version: 1.8
 Author URI: https://www.bellevuecollege.edu
 GitHub Plugin URI: bellevuecollege/rave-alert-notification
+Text Domain: rave-alert-notification
 */
+
+// Load Settings
+$bc_rave_network_settings = get_site_option( 'ravealert_network_settings' );
+
+// Load Classes
+require_once( 'classes/class-cap-alert.php' );
+require_once( 'classes/class-open-message.php' );
+require_once( 'alert-config.php' );
+require_once( 'rave-alert-api.php' );
+
+/**
+ * Instantiate API for Alerts on the Main Site
+ */
+if ( is_main_site() ) {
+	$rave_alert_api = new Rave_Alert_API();
+}
 
 /**
  * Create BC Alert CPT if archive type is set to CPT in the network settings
@@ -21,8 +38,7 @@ if ( is_main_site() && 'true' === $bc_rave_network_settings['ravealert_do_archiv
  * Script calls Ajax after x amount of miliseconds to keep page updating every x miliseconds
  */
 function bc_rave_enqueue_ajax() {
-    $rest_url           = network_site_url( '/wp-json/rave/v' . Rave_Alert_API::$rest_version ) . '/alerts/';
-    $more_info_message  = bc_rave_return_more_info_link();
+    $rest_url           = network_site_url( '/wp-json/rave/v' . Rave_Alert_API::$rest_version ) . '/';
 
     //Get college open message: returns an array of description and class
     $open_message_data  = Open_Message::get_message();
@@ -34,14 +50,14 @@ function bc_rave_enqueue_ajax() {
     $homepage_site = network_home_url();
     $is_homepage = ( $current_site == $homepage_site ? true : false );
 
-    $rest_variables = 'var rest_php_variables = {
+    $rest_variables = 'var rave_alert_settings = {
                                                     rest_url: "' . $rest_url . '", 
-                                                    more_info_message: "' . $more_info_message . '",
+                                                    more_info_url: "' . bc_rave_return_more_info_link() . '",
                                                     open_message_desc: "' . addslashes(stripslashes($open_message_desc)) . '",
                                                     open_message_class: "' . addslashes(stripslashes($open_message_class)) . '",
                                                     is_homepage: "' . $is_homepage . '"
                                                 };';
-    wp_enqueue_script( 'rave-alert-ajax', plugin_dir_url( __FILE__ ) . 'js/rave-alert-ajax.js#asyncdeferload', array('jquery'), '1.8', true );
+    wp_enqueue_script( 'rave-alert-ajax', plugin_dir_url( __FILE__ ) . 'js/rave-alert-ajax.js#asyncdeferload', array('jquery'), '2.0', true );
     wp_add_inline_script( 'rave-alert-ajax', $rest_variables, 'before' );
 
 }
@@ -68,10 +84,6 @@ add_filter('cron_schedules', 'bc_rave_interval');
  */
 if ( is_main_site() ) {
 	if ( ! wp_next_scheduled( 'rave_cron' ) ) { 
-if ( ! wp_next_scheduled( 'rave_cron' ) ) { 
-	if ( ! wp_next_scheduled( 'rave_cron' ) ) { 
-		wp_schedule_event( time(), 'minutes_1', 'rave_cron' ); 
-	wp_schedule_event( time(), 'minutes_1', 'rave_cron' ); 
 		wp_schedule_event( time(), 'minutes_1', 'rave_cron' ); 
 	}
 	add_action( 'rave_cron', 'bc_rave_cron' );
