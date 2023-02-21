@@ -25,7 +25,7 @@ jQuery( document ).ready( function( $ ) {
                 // Checks if current page is homepage and severity is minor OR severity is not minor regardless of page
                 // Then prepends body with rave alert header
                 if (
-                    ( true === rave_alert_settings['is_homepage'] && 'minor' === alert_info['severity'].toLowerCase() ) || 
+                    ( '1' === rave_alert_settings['is_homepage'] && 'minor' === alert_info['severity'].toLowerCase() ) || 
                     ( 'minor' !== alert_info['severity'].toLowerCase() )
                     ) {
                     
