@@ -4,7 +4,7 @@ Plugin Name: Rave Alert Notification
 Plugin URI: https://github.com/BellevueCollege/rave-alert-notification
 Description: Sends Rave Alert notification to Bellevue College WordPress sites.
 Author: Bellevue College IT Services
-Version: 1.9
+Version: 1.9.1
 Author URI: https://www.bellevuecollege.edu
 GitHub Plugin URI: bellevuecollege/rave-alert-notification
 Text Domain: rave-alert-notification
@@ -49,7 +49,7 @@ function bc_rave_enqueue_ajax() {
     //checks if current site is the homepage
     $current_site = get_site_url() . '/';
     $homepage_site = network_home_url();
-    $is_homepage = ( $current_site == $homepage_site ? true : false );
+    $is_homepage = ( is_main_site() && is_front_page() ? true : false );
 
     $rest_variables = 'var rave_alert_settings = {
                                                     rest_url: "' . $rest_url . '", 
@@ -196,7 +196,7 @@ function bc_rave_create_rave_post( $xml_data ) {
 
 					// If successful, populate custom fields for OHO News CPT
 					if ( 'oho' === $archive_type && is_int( $post_return_value ) && $post_return_value > 0 ) {
-						update_field('publish_date', current_time( 'Y-m-d H:i:s' ), $post_return_value);
+						update_field('publish_date', current_time( 'Ymd' ), $post_return_value);
 						update_field('summary', $headline, $post_return_value);
 						//update_field('news_type', (int)$bc_rave_network_settings['ravealert_oho_news_term'], $post_return_value);
 						wp_set_post_terms( $post_return_value, (int)$bc_rave_network_settings['ravealert_oho_news_term'], 'news_type' );
