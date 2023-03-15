@@ -14,7 +14,7 @@
     <certainty>Observed</certainty>
     <effective>2022-12-21T15:52:00-08:00</effective>
     <onset>2022-12-21T15:52:00-08:00</onset>
-    <expires>2022-12-23T14:33:39-08:00</expires>
+    <expires>2023-12-23T14:33:39-08:00</expires>
     <senderName>BellevueCollegeAlerts</senderName>
     <headline>[HEADLINE] This is a test of the 'extreme' severity alert. This is ONLY A TEST.</headline>
     <description>[DESC] This is a test of the 'extreme' severity alert. This is ONLY A TEST.</description>

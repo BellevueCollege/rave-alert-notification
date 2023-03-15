@@ -136,7 +136,7 @@ function bc_rave_return_more_info_link() {
 	}
 
 	if ( 'oho' === $archive_type ) {
-		$more_info_site = network_site_url('/bellevue-news');
+		$more_info_site = network_site_url('/news');
 		return $more_info_site;
 	}
 
