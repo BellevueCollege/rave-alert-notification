@@ -78,14 +78,13 @@ jQuery( document ).ready( function( $ ) {
             //Always run even if REST API fails
 
             //If there is an Open Message Alert (No CAP XML Alert)
-            var more_info_message = rave_alert_settings['more_info_message'];
             var open_message_desc = rave_alert_settings['open_message_desc'];
             var open_message_class = rave_alert_settings['open_message_class'];
 
             var open_output = '';
 
             if (open_message_desc != '' && open_message_class != '') {
-                open_output += '<div id="ravealertheader" class="container ' + open_message_class + ' open-msg"><div class="row"><div class="col-sm-2"><span class="glyphicon glyphicon-warning-sign fa-solid fa-triangle-exclamation fa-5x" aria-hidden="true"></span></div><div class="col-sm-10"><div id="ravealertmessage"><p>' + open_message_desc + ' ' + more_info_message + '</p></div></div></div></div>';
+                open_output += '<div id="ravealertheader" class="container ' + open_message_class + ' open-msg"><div class="row"><div class="col-sm-2"><span class="glyphicon glyphicon-warning-sign fa-solid fa-triangle-exclamation fa-5x" aria-hidden="true"></span></div><div class="col-sm-10"><div id="ravealertmessage"><p>' + open_message_desc + '</p></div></div></div></div>';
                 
                 //check if #ravealertheader does not exist in <body>
                 if ($('#ravealertheader').length == 0) {
