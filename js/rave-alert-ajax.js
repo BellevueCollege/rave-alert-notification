@@ -85,7 +85,7 @@ jQuery( document ).ready( function( $ ) {
             var open_output = '';
 
             if (open_message_desc != '' && open_message_class != '') {
-                open_output += '<div id="ravealertheader" class="container ' + open_message_class + ' open-msg"><div class="row"><div class="col-sm-2"><span class="glyphicon glyphicon-warning-sign fa-solid fa-triangle-exclamation" aria-hidden="true"></span></div><div class="col-sm-10"><div id="ravealertmessage"><p>' + open_message_desc + ' ' + more_info_message + '</p></div></div></div></div>';
+                open_output += '<div id="ravealertheader" class="container ' + open_message_class + ' open-msg"><div class="row"><div class="col-sm-2"><span class="glyphicon glyphicon-warning-sign fa-solid fa-triangle-exclamation fa-5x" aria-hidden="true"></span></div><div class="col-sm-10"><div id="ravealertmessage"><p>' + open_message_desc + ' ' + more_info_message + '</p></div></div></div></div>';
                 
                 //check if #ravealertheader does not exist in <body>
                 if ($('#ravealertheader').length == 0) {
