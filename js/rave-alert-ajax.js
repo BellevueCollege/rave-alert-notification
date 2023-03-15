@@ -5,34 +5,38 @@
 
 
 jQuery( document ).ready( function( $ ) {
-    (function callAjax() {
+    ( function callAjax() {
         // Get minutes of current time for cache busting
         var current_time = new Date();
         var current_hours = current_time.getUTCHours();
         var current_minutes = current_time.getUTCMinutes();
-        var cachebuster = current_hours +'-'+ current_minutes;
+        var cachebuster = `${current_hours}${current_minutes}`;
+
         $.ajax({
             method: 'GET',
-            url: rest_php_variables['rest_url'] + '?' + cachebuster,
+            url: `${rave_alert_settings['rest_url']}alerts/${cachebuster}/`,
         }).done(function (alert_info) {
 
             // If there is an Alert via CAP XML
             // verify data (identifier) returned is a string 
-            if ( typeof alert_info['identifier'] == 'string' ) {
-                var more_info_message = rest_php_variables['more_info_message'];
+            if ( typeof alert_info['identifier'] === 'string' ) {
+                var more_info_message = '' !== rave_alert_settings['more_info_url'] ? `<a href="${rave_alert_settings['more_info_url']}/${alert_info['identifier']}" target="_blank">More Information.</a>` : '';
 
                 // Checks if current page is homepage and severity is minor OR severity is not minor regardless of page
                 // Then prepends body with rave alert header
-                if ( ( rest_php_variables['is_homepage'] == true && alert_info['severity'].toLowerCase() == 'minor' ) || (alert_info['severity'].toLowerCase() !== 'minor') ) {
+                if (
+                    ( '1' === rave_alert_settings['is_homepage'] && 'minor' === alert_info['severity'].toLowerCase() ) || 
+                    ( 'minor' !== alert_info['severity'].toLowerCase() )
+                    ) {
                     
                     //check if #ravealertheader does not exist in <body>
                     if ($('#ravealertheader').length == 0) {
-                        $('body').prepend('<div id="ravealertheader" class="container alert"><div class="row"><div class="col-sm-2"><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span></div><div class="col-sm-10"><div id="ravealertmessage"><h2 id="ravealertevent">' + 'Loading Alert...' + '</h2><p>' + 'Loading headline...' + ' ' + more_info_message + '</p></div></div></div></div>');
+                        $('body').prepend('<div id="ravealertheader" class="container alert"><div class="row"><div class="col-sm-2"><span class="glyphicon glyphicon-warning-sign fa-solid fa-triangle-exclamation" aria-hidden="true"></span></div><div class="col-sm-10"><div id="ravealertmessage"><h2 id="ravealertevent">' + 'Loading Alert...' + '</h2><p>' + 'Loading headline...' + ' ' + more_info_message + '</p></div></div></div></div>');
                     }
                     
                     $.ajax({
                         method: 'GET',
-                            url: rest_php_variables['rest_url'] + alert_info['identifier'] + '?' + cachebuster,
+                            url: `${rave_alert_settings['rest_url']}alert/${alert_info['identifier']}/${cachebuster}/`,
                     }).done(function (data) {
 
                         var output = '';
@@ -45,7 +49,7 @@ jQuery( document ).ready( function( $ ) {
                             var new_headline = data.info['headline'];
                             var new_class = data.info['class'];
                             
-                            output += '<div id="ravealertheader" class="container ' + new_class + '"><div class="row"><div class="col-sm-2"><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span></div><div class="col-sm-10"><div id="ravealertmessage"><h2 id="ravealertevent">' + new_event + '</h2><p>' + new_headline + ' ' + more_info_message + '</p></div></div></div></div>';
+                            output += '<div id="ravealertheader" class="container ' + new_class + '"><div class="row"><div class="col-sm-2"><span class="glyphicon glyphicon-warning-sign fa-solid fa-triangle-exclamation" aria-hidden="true"></span></div><div class="col-sm-10"><div id="ravealertmessage"><h2 id="ravealertevent">' + new_event + '</h2><p>' + new_headline + ' ' + more_info_message + '</p></div></div></div></div>';
 
                         }
 
@@ -74,14 +78,14 @@ jQuery( document ).ready( function( $ ) {
             //Always run even if REST API fails
 
             //If there is an Open Message Alert (No CAP XML Alert)
-            var more_info_message = rest_php_variables['more_info_message'];
-            var open_message_desc = rest_php_variables['open_message_desc'];
-            var open_message_class = rest_php_variables['open_message_class'];
+            var more_info_message = rave_alert_settings['more_info_message'];
+            var open_message_desc = rave_alert_settings['open_message_desc'];
+            var open_message_class = rave_alert_settings['open_message_class'];
 
             var open_output = '';
 
             if (open_message_desc != '' && open_message_class != '') {
-                open_output += '<div id="ravealertheader" class="container ' + open_message_class + ' open-msg"><div class="row"><div class="col-sm-2"><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span></div><div class="col-sm-10"><div id="ravealertmessage"><p>' + open_message_desc + ' ' + more_info_message + '</p></div></div></div></div>';
+                open_output += '<div id="ravealertheader" class="container ' + open_message_class + ' open-msg"><div class="row"><div class="col-sm-2"><span class="glyphicon glyphicon-warning-sign fa-solid fa-triangle-exclamation fa-5x" aria-hidden="true"></span></div><div class="col-sm-10"><div id="ravealertmessage"><p>' + open_message_desc + ' ' + more_info_message + '</p></div></div></div></div>';
                 
                 //check if #ravealertheader does not exist in <body>
                 if ($('#ravealertheader').length == 0) {

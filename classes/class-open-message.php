@@ -2,9 +2,9 @@
 
 class Open_Message {
 	static function get_message() {
-		$network_settings = get_site_option( 'ravealert_network_settings' );
-		$high_alert = $network_settings['high_alert'];
-		$open_message = $network_settings['ravealert_college_openmessage'];
+		$bc_rave_network_settings = get_site_option( 'ravealert_network_settings' );
+		$high_alert = $bc_rave_network_settings['high_alert'];
+		$open_message = $bc_rave_network_settings['ravealert_college_openmessage'];
 		$message = array();
 
 		if ( $high_alert === 'true' ) {
