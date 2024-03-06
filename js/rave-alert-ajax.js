@@ -14,7 +14,7 @@ jQuery( document ).ready( function( $ ) {
 
         $.ajax({
             method: 'GET',
-            url: `${rave_alert_settings['rest_url']}alerts/${cachebuster}/`,
+            url: `${rave_alert_settings['rest_url']}alerts/${cachebuster}`,
         }).done(function (alert_info) {
 
             // If there is an Alert via CAP XML
@@ -36,7 +36,7 @@ jQuery( document ).ready( function( $ ) {
                     
                     $.ajax({
                         method: 'GET',
-                            url: `${rave_alert_settings['rest_url']}alert/${alert_info['identifier']}/${cachebuster}/`,
+                            url: `${rave_alert_settings['rest_url']}alert/${alert_info['identifier']}/${cachebuster}`,
                     }).done(function (data) {
 
                         var output = '';
