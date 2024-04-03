@@ -174,16 +174,16 @@ function ravealert_network_settings() {
 					<td>
 						<select name="network_settings[ravealert_archive_site]" id="archive_site">
 							<option value=""></option>
-						<?php $net_sites = wp_get_sites();
+						<?php $net_sites = get_sites();
 							foreach( $net_sites as $net_site ) {
 								$site_selected = "";
-								if ( (null != $bc_rave_network_settings["ravealert_archive_site"]) && $net_site["blog_id"] == $bc_rave_network_settings["ravealert_archive_site"]) { 
+								if ( (null !== $bc_rave_network_settings["ravealert_archive_site"]) && $net_site->blog_id === $bc_rave_network_settings["ravealert_archive_site"]) { 
 									$site_selected = "selected";
 								}
-								$blog_detail = get_blog_details($net_site["blog_id"]);
+								$blog_detail = get_blog_details($net_site->blog_id);
 								$blog_name = $blog_detail->blogname;
 						?>
-							<option value="<?php echo $net_site["blog_id"]; ?>" <?php echo $site_selected; ?>><?php echo $blog_name; ?></option>
+							<option value="<?php echo $net_site->blog_id; ?>" <?php echo $site_selected; ?>><?php echo $blog_name; ?></option>
 						<?php } ?>
 						</select>
 						<p><small>If archiving to Posts is enabled, which site should they be sent to?</small></p>
