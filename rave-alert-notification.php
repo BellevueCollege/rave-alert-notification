@@ -4,7 +4,7 @@ Plugin Name: Rave Alert Notification
 Plugin URI: https://github.com/BellevueCollege/rave-alert-notification
 Description: Sends Rave Alert notification to Bellevue College WordPress sites.
 Author: Bellevue College IT Services
-Version: 1.9.1
+Version: 1.9.2
 Author URI: https://www.bellevuecollege.edu
 GitHub Plugin URI: bellevuecollege/rave-alert-notification
 Text Domain: rave-alert-notification
@@ -43,8 +43,8 @@ function bc_rave_enqueue_ajax() {
 
     //Get college open message: returns an array of description and class
     $open_message_data  = Open_Message::get_message();
-    $open_message_desc  = isset( $open_message_data['description'] ) ? $open_message_data['description'] : null;
-    $open_message_class = isset( $open_message_data['class'] ) ? $open_message_data['class'] : null;
+    $open_message_desc  = isset( $open_message_data['description'] ) ? addslashes(stripslashes($open_message_data['description']))  : null;
+    $open_message_class = isset( $open_message_data['class'] ) ? addslashes(stripslashes($open_message_data['class'])) : null;
 
     //checks if current site is the homepage
     $current_site = get_site_url() . '/';
@@ -54,11 +54,11 @@ function bc_rave_enqueue_ajax() {
     $rest_variables = 'var rave_alert_settings = {
                                                     rest_url: "' . $rest_url . '", 
                                                     more_info_url: "' . bc_rave_return_more_info_link() . '",
-                                                    open_message_desc: "' . addslashes(stripslashes($open_message_desc)) . '",
-                                                    open_message_class: "' . addslashes(stripslashes($open_message_class)) . '",
+                                                    open_message_desc: "' . $open_message_desc . '",
+                                                    open_message_class: "' . $open_message_class . '",
                                                     is_homepage: "' . $is_homepage . '"
                                                 };';
-    wp_enqueue_script( 'rave-alert-ajax', plugin_dir_url( __FILE__ ) . 'js/rave-alert-ajax.js#asyncdeferload', array('jquery'), '2.0', true );
+    wp_enqueue_script( 'rave-alert-ajax', plugin_dir_url( __FILE__ ) . 'js/rave-alert-ajax.js#asyncdeferload', array('jquery'), '1.9.2', true );
     wp_add_inline_script( 'rave-alert-ajax', $rest_variables, 'before' );
 
 }
@@ -136,7 +136,7 @@ function bc_rave_return_more_info_link() {
 	}
 
 	if ( 'oho' === $archive_type ) {
-		$more_info_site = network_site_url('/news');
+		$more_info_site = network_site_url('/news/article');
 		return $more_info_site;
 	}
 

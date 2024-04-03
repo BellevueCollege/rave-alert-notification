@@ -1,0 +1,26 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+  branches:
+   include:
+     - trunk
+
+pr:
+ branches:
+   include:
+     - trunk
+     - hotfix-*
+     - release-*
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: '$(Pipeline.Workspace)'
+    artifact: 'rave-alert-notification'
+    publishLocation: 'pipeline'
