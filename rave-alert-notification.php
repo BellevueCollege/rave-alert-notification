@@ -58,7 +58,7 @@ function bc_rave_enqueue_ajax() {
                                                     open_message_class: "' . addslashes(stripslashes($open_message_class)) . '",
                                                     is_homepage: "' . $is_homepage . '"
                                                 };';
-    wp_enqueue_script( 'rave-alert-ajax', plugin_dir_url( __FILE__ ) . 'js/rave-alert-ajax.js#asyncdeferload', array('jquery'), '2.0', true );
+    wp_enqueue_script( 'rave-alert-ajax', plugin_dir_url( __FILE__ ) . 'js/rave-alert-ajax.js#asyncdeferload', array('jquery'), '1.9.2', true );
     wp_add_inline_script( 'rave-alert-ajax', $rest_variables, 'before' );
 
 }

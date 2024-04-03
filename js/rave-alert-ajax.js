@@ -8,8 +8,8 @@ jQuery( document ).ready( function( $ ) {
     ( function callAjax() {
         // Get minutes of current time for cache busting
         var current_time = new Date();
-        var current_hours = current_time.getUTCHours();
-        var current_minutes = current_time.getUTCMinutes();
+        var current_hours = ("0" + current_time.getUTCHours()).slice(-2); // Force to two digits
+        var current_minutes = ("0" + current_time.getUTCMinutes()).slice(-2); // Force to two digits
         var cachebuster = `${current_hours}${current_minutes}`;
 
         $.ajax({
