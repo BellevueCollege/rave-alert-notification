@@ -97,16 +97,17 @@ function bc_rave_cron() {
 	if ( is_main_site() ) {
 		$alert      = new CAP_Alert();
 		$alert_data = $alert->get_alert();
+		$alert_data_string = print_r( $alert_data, true );
+		bc_rave_log( "CRON- Get Alert: $alert_data_string" );
 		$response   = $alert->store_db_alert( $alert_data );
-
+		bc_rave_log( "CRON- Store Alert: $response" );
 		$return_post_id = bc_rave_create_rave_post( $alert_data );
+		bc_rave_log( "CRON- Create Post: $return_post_id" );
 	}
 }
 
 /* 
  * Return 'More information' link
- * 
- * TO DO: Add more specific link, and make this link be based on how alerts are archived. 
  */
 
 function bc_rave_return_more_info_link() {
@@ -153,11 +154,12 @@ function bc_rave_create_rave_post( $xml_data ) {
 	//error_log("identifier :".$xml_data["identifier"]);
 
 	if (
-		 isset( $xml_data ) && 
-		 isset( $xml_data["event"] ) && 
-		 isset( $xml_data["headline"] ) && 
-		 isset( $xml_data["description"] ) && 
-		 isset( $xml_data["identifier"] ) ) {
+			isset( $xml_data ) && 
+			isset( $xml_data["event"] ) && 
+			isset( $xml_data["headline"] ) && 
+			isset( $xml_data["description"] ) && 
+			isset( $xml_data["identifier"] )
+		){
 
 		$event            = $xml_data["event"];
 		$headline         = $xml_data["headline"];
