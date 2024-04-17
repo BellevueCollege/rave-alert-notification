@@ -209,3 +209,66 @@ function bc_rave_create_rave_post( $xml_data ) {
 
 	return $post_return_value;
 }
+
+
+/**
+ * Log Rave Alert Debug Info
+ */
+function bc_rave_log( $message, $webhook = false ) {
+
+	global $bc_rave_network_settings;
+
+	$currentDateTime = date('Y-m-d H:i:s', time());
+	$prefix = "$currentDateTime - RAVE: ";
+	if ( defined( 'RAVE_DEBUG' ) && true === RAVE_DEBUG ) {
+		error_log( $prefix . $message . PHP_EOL, 3, 'wp-content/rave-alert.log' );
+	}
+	// Push via webhook to Teams
+	if ( $webhook ) {
+		$webhook_url = $bc_rave_network_settings['teams_error_webhook_url'];
+		bc_rave_log( 'Webhook URL: ' . $webhook_url, false );
+		$card_json = json_encode( array(
+			'type' => 'message',
+			'attachments' => array(
+				array(
+					'contentType' => 'application/vnd.microsoft.card.adaptive',
+					'contentUrl' => null,
+					'content' => array(
+						'$schema' => 'http://adaptivecards.io/schemas/adaptive-card.json',
+						'type' => 'AdaptiveCard',
+						'version' => '1.2',
+						'body' => array(
+							array(
+								'type' => 'TextBlock',
+								'text' => "ERROR: WordPress Rave Alert Plugin",
+								'size' => 'large',
+							),
+							array(
+								'type' => 'TextBlock',
+								'text' => "Error message: '$message'. Manual intervention needed to clear cache.",
+								'size' => 'medium',
+								'wrap' => true,
+							),
+							array(
+								'type' => 'TextBlock',
+								'text' => "Log Created: $currentDateTime",
+								'size' => 'medium',
+							),
+							array(
+								'type' => 'TextBlock',
+								'text' => network_site_url('/'),
+								'size' => 'medium',
+								'wrap' => true,
+							),
+						)
+					)
+				)
+			)
+		));
+		$response = wp_remote_post( $webhook_url, array(
+			'headers' => array('Content-Type' => 'application/json'),
+			'body' => $card_json,
+		) );
+		bc_rave_log( "Posted Webhook for Log. Response: " . print_r( $response, true ), false );
+	}
+}
