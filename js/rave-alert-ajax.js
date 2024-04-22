@@ -3,7 +3,6 @@
 *
 */
 
-
 jQuery( document ).ready( function( $ ) {
     ( function callAjax() {
         // Get minutes of current time for cache busting
@@ -17,10 +16,30 @@ jQuery( document ).ready( function( $ ) {
             url: `${rave_alert_settings['rest_url']}alerts/${cachebuster}`,
         }).done(function (alert_info) {
 
-            // If there is an Alert via CAP XML
-            // verify data (identifier) returned is a string 
             if ( typeof alert_info['identifier'] === 'string' ) {
-                var more_info_message = '' !== rave_alert_settings['more_info_url'] ? `<a href="${rave_alert_settings['more_info_url']}/${alert_info['identifier']}" target="_blank">More Information.</a>` : '';
+                
+                // Get alert data
+                var alert_id = alert_info['identifier'];
+                var alert_severity = alert_info['severity'];
+                var alert_event = alert_info['message']['event'];
+                var alert_headline = alert_info['message']['headline'];
+                var alert_class = alert_info['message']['class'];
+                var alert_info_url = alert_info['message']['more_info'];
+
+                var more_info_link = '' !== alert_info_url ? `<a href="${alert_info_url}" target="_blank">More Information.</a>` : '';
+
+                var output = `
+                    <div id="ravealertheader" class="container ${alert_class}">
+                        <div class="row"><div class="col-sm-2">
+                            <span class="glyphicon glyphicon-warning-sign fa-solid fa-triangle-exclamation fa-5x" aria-hidden="true"></span>
+                        </div>
+                        <div class="col-sm-10">
+                            <div id="ravealertmessage">
+                                <h2 id="ravealertevent">${alert_event}</h2>
+                                <p>${alert_headline} ${more_info_link}</p>
+                            </div>
+                        </div></div>
+                    </div>`;
 
                 // Checks if current page is homepage and severity is minor OR severity is not minor regardless of page
                 // Then prepends body with rave alert header
@@ -31,34 +50,8 @@ jQuery( document ).ready( function( $ ) {
                     
                     //check if #ravealertheader does not exist in <body>
                     if ($('#ravealertheader').length == 0) {
-                        $('body').prepend('<div id="ravealertheader" class="container alert"><div class="row"><div class="col-sm-2"><span class="glyphicon glyphicon-warning-sign fa-solid fa-triangle-exclamation fa-5x" aria-hidden="true"></span></div><div class="col-sm-10"><div id="ravealertmessage"><h2 id="ravealertevent">' + 'Loading Alert...' + '</h2><p>' + 'Loading headline...' + ' ' + more_info_message + '</p></div></div></div></div>');
+                        $('body').prepend(output);
                     }
-                    
-                    $.ajax({
-                        method: 'GET',
-                            url: `${rave_alert_settings['rest_url']}alert/${alert_info['identifier']}/${cachebuster}`,
-                    }).done(function (data) {
-
-                        var output = '';
-
-                        // verify data returned is JSON 
-                        if (typeof data == 'object') {
-
-                            // Set variables
-                            var new_event = data.info['event'];
-                            var new_headline = data.info['headline'];
-                            var new_class = data.info['class'];
-                            
-                            output += '<div id="ravealertheader" class="container ' + new_class + '"><div class="row"><div class="col-sm-2"><span class="glyphicon glyphicon-warning-sign fa-solid fa-triangle-exclamation fa-5x" aria-hidden="true"></span></div><div class="col-sm-10"><div id="ravealertmessage"><h2 id="ravealertevent">' + new_event + '</h2><p>' + new_headline + ' ' + more_info_message + '</p></div></div></div></div>';
-
-                        }
-
-                        //Replace #ravealertheader with new output
-                        $('#ravealertheader').replaceWith( output );
-                    }).fail(function (error) {
-                        console.log('Error calling RAVE REST API: ');
-                        console.log(error);
-                    });
 
                 } else { // Remove #ravealertheader if there is one and severity is minor and not on the homepage
                     $('#ravealertheader').remove();
@@ -104,6 +97,4 @@ jQuery( document ).ready( function( $ ) {
             setTimeout(callAjax, 60000 * 1); 
         });
     })();
-
-
 });

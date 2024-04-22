@@ -60,10 +60,12 @@ class CAP_Alert {
 
 	public function store_db_alert( $alert ) {
 		if ( add_site_option( $this->option_name, $alert ) ) {
-			// self::clear_kinsta_cache();
+			self::clear_kinsta_cache();
+			bc_rave_log( 'New alert saved to DB' );
 			return 'Option Created';
 		} elseif ( update_site_option( $this->option_name, $alert ) ) {
-			// self::clear_kinsta_cache();
+			self::clear_kinsta_cache();
+			bc_rave_log( 'Existing alert updated in DB' );
 			return 'Option Updated';
 		} else {
 			return 'Option Not Updated';
@@ -77,6 +79,29 @@ class CAP_Alert {
 
 	// This function should probably go somewhere else...
 	public static function clear_kinsta_cache() {
-		// @file_get_contents( network_home_url() . 'kinsta-clear-cache/wp-json/rave/v1/alerts/' ); -- non-functional at this time. Cache is cleared via a cachebuster query
+		bc_rave_log( 'Trying to clear Kinsta Cache with URL: ' .  network_site_url('/kinsta-clear-cache-all') );
+		$response = wp_remote_get( network_site_url('/kinsta-clear-cache-all'), [
+			'sslverify' => false, 
+			'timeout'   => 5
+		] );
+
+		bc_rave_log( 'Response Code: ' . $response['response']['code'] );
+
+		if ( is_wp_error( $response ) ) {
+			bc_rave_log( 'Cache Not Cleared: ' . $response->get_error_message(), true );
+			return null;
+		}
+
+		if ( 200 !== $response['response']['code'] ) {
+			bc_rave_log( 'Cache Not Cleared: ' . $response['response']['message'], true );
+			return null;
+		}
+
+		if ( false === strpos( $response['body'], 'Cache has been cleared' ) ) {
+			bc_rave_log( 'Cache Not Cleared: ' . $response['body'], true );
+			return null;
+		}
+
+		bc_rave_log( 'Cache Cleared!' );
 	}
 } 
