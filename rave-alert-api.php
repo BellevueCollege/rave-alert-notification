@@ -79,7 +79,14 @@ class Rave_Alert_API {
 		if ( $alert ) {
 			$alert_info = array(
 				'identifier' => $alert->identifier,
-				'severity' => $alert->info->severity
+				'severity'   => $alert->info->severity,
+				'message'    => array(
+					'event'       => $alert->info->event,
+					'headline'    => $alert->info->headline,
+					'description' => $alert->info->description,
+					'class'       => $alert->info->class, //is a string
+					'more_info'   => bc_rave_return_more_info_link() . '/' . $alert->identifier
+				)
 			); 
 			return $alert_info;
 		} else {

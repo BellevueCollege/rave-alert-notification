@@ -82,6 +82,8 @@ function ravealert_network_settings() {
 			$ravealert_college_openmessage = stripslashes( $bc_rave_network_settings['ravealert_college_openmessage'] );
 
 			$ravealert_xml_feedurl = $bc_rave_network_settings['ravealert_xml_feedurl'];
+
+			$teams_error_webhook_url = $bc_rave_network_settings['teams_error_webhook_url'];
 			
 			$archive_alert = $bc_rave_network_settings['ravealert_do_archive'];
 			if( $archive_alert == "true" ) {
@@ -141,6 +143,16 @@ function ravealert_network_settings() {
 						<input name="network_settings[ravealert_xml_feedurl]" type='url' value='<?php echo $ravealert_xml_feedurl; ?>' style="width:100%;">
 					</td>
 				</tr>
+				<tr valign="top">
+					<th scope="row">
+						<label for="teams_error_webhook_url">
+							Teams Error Webhook URL
+						</label>
+					</th>
+					<td>
+						<input name="network_settings[teams_error_webhook_url]" type='url' value='<?php echo $teams_error_webhook_url; ?>' style="width:100%;">
+						<p><small>URL to Teams webhook to send error messages to (leave blank to skip notification if something has gone wrong)</small></p>
+					</td>
 				<tr valign="top">
 					<th scope="row">
 							Archive Rave Alerts?
