@@ -49,7 +49,7 @@ function bc_rave_enqueue_ajax() {
     //checks if current site is the homepage
     $current_site = get_site_url() . '/';
     $homepage_site = network_home_url();
-    $is_homepage = ( is_main_site() && is_front_page() ? true : false );
+    $is_homepage = ( is_main_site() && ( is_front_page() || 'home' === get_post_type() ) ? true : false );
 
     $rest_variables = 'var rave_alert_settings = {
                                                     rest_url: "' . $rest_url . '", 
