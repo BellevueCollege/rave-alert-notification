@@ -29,16 +29,18 @@ jQuery( document ).ready( function( $ ) {
                 var more_info_link = '' !== alert_info_url ? `<a href="${alert_info_url}" target="_blank">More Information.</a>` : '';
 
                 var output = `
-                    <div id="ravealertheader" class="container ${alert_class}">
-                        <div class="row"><div class="col-sm-2">
-                            <span class="glyphicon glyphicon-warning-sign fa-solid fa-triangle-exclamation fa-5x" aria-hidden="true"></span>
-                        </div>
-                        <div class="col-sm-10">
-                            <div id="ravealertmessage">
-                                <h2 id="ravealertevent">${alert_event}</h2>
-                                <p>${alert_headline} ${more_info_link}</p>
+                    <div id="ravealertheader" class="${alert_class}">
+                        <div class="container-xl py-3">
+                            <div class="row"><div class="col-sm-2">
+                                <span class="glyphicon glyphicon-warning-sign fa-solid fa-triangle-exclamation fa-5x" aria-hidden="true"></span>
                             </div>
-                        </div></div>
+                            <div class="col-sm-10">
+                                <div id="ravealertmessage">
+                                    <h2 id="ravealertevent">${alert_event}</h2>
+                                    <p>${alert_headline} ${more_info_link}</p>
+                                </div>
+                            </div></div>
+                        </div>
                     </div>`;
 
                 // Checks if current page is homepage and severity is minor OR severity is not minor regardless of page
@@ -77,8 +79,21 @@ jQuery( document ).ready( function( $ ) {
             var open_output = '';
 
             if (open_message_desc != '' && open_message_class != '') {
-                open_output += '<div id="ravealertheader" class="container ' + open_message_class + ' open-msg"><div class="row"><div class="col-sm-2"><span class="glyphicon glyphicon-warning-sign fa-solid fa-triangle-exclamation fa-5x" aria-hidden="true"></span></div><div class="col-sm-10"><div id="ravealertmessage"><p>' + open_message_desc + '</p></div></div></div></div>';
-                
+                // open_output += '<div id="ravealertheader" class="container ' + open_message_class + ' open-msg"><div class="row"><div class="col-sm-2"><span class="glyphicon glyphicon-warning-sign fa-solid fa-triangle-exclamation fa-5x" aria-hidden="true"></span></div><div class="col-sm-10"><div id="ravealertmessage"><p>' + open_message_desc + '</p></div></div></div></div>';
+                open_output+= `
+                    <div id="ravealertheader" class="${open_message_class}">
+                        <div class="container-xl py-3">
+                            <div class="row"><div class="col-sm-2">
+                                <span class="glyphicon glyphicon-warning-sign fa-solid fa-triangle-exclamation fa-5x" aria-hidden="true"></span>
+                            </div>
+                            <div class="col-sm-10">
+                                <div id="ravealertmessage">
+                                    ${open_message_desc}
+                                </div>
+                            </div></div>
+                        </div>
+                    </div>`;
+
                 //check if #ravealertheader does not exist in <body>
                 if ($('#ravealertheader').length == 0) {
                     $('body').prepend(open_output);
