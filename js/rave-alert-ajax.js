@@ -79,7 +79,6 @@ jQuery( document ).ready( function( $ ) {
             var open_output = '';
 
             if (open_message_desc != '' && open_message_class != '') {
-                // open_output += '<div id="ravealertheader" class="container ' + open_message_class + ' open-msg"><div class="row"><div class="col-sm-2"><span class="glyphicon glyphicon-warning-sign fa-solid fa-triangle-exclamation fa-5x" aria-hidden="true"></span></div><div class="col-sm-10"><div id="ravealertmessage"><p>' + open_message_desc + '</p></div></div></div></div>';
                 open_output+= `
                     <div id="ravealertheader" class="${open_message_class}">
                         <div class="container-xl py-3">
