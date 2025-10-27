@@ -18,9 +18,53 @@ pr:
 pool:
   vmImage: ubuntu-latest
 
+variables:
+    phpVersion: 8.2
+    npm_config_cache: $(Pipeline.Workspace)/.npm
+
 steps:
-- task: PublishPipelineArtifact@1
-  inputs:
-    targetPath: '$(Pipeline.Workspace)'
-    artifact: 'rave-alert-notification'
-    publishLocation: 'pipeline'
+  - script: |
+      sudo update-alternatives --set php /usr/bin/php$(phpVersion)
+      sudo update-alternatives --set phar /usr/bin/phar$(phpVersion)
+      sudo update-alternatives --set phpdbg /usr/bin/phpdbg$(phpVersion)
+      sudo update-alternatives --set php-cgi /usr/bin/php-cgi$(phpVersion)
+      sudo update-alternatives --set phar.phar /usr/bin/phar.phar$(phpVersion)
+      php -version
+    displayName: 'Use PHP version $(phpVersion)'
+  - task: NodeTool@0
+    inputs:
+      versionSource: 'spec'
+      versionSpec: '22.x'
+  - task: Cache@2
+    inputs:
+      key: 'npm | "$(Agent.OS)" | package-lock.json'
+      restoreKeys: |
+        npm | "$(Agent.OS)"
+      path: $(npm_config_cache)
+    displayName: Cache npm
+  - task: Npm@1
+    inputs:
+      command: 'ci'
+    displayName: NPM Clean Install
+  - task: Npm@1
+    inputs:
+      command: 'custom'
+      customCommand: 'run build'
+    displayName: NPM Build
+  - task: Npm@1
+    inputs:
+      command: 'custom'
+      customCommand: 'prune --omit=dev'
+    displayName: NPM Prune Dev Deps
+  - task: DeleteFiles@1
+    inputs:
+      SourceFolder:
+      Contents: |
+        /.git
+        /.git*
+      RemoveDotFiles: true
+  - task: PublishPipelineArtifact@1
+    inputs:
+      targetPath: '$(Pipeline.Workspace)'
+      artifact: 'rave-alert-notification'
+      publishLocation: 'pipeline'
