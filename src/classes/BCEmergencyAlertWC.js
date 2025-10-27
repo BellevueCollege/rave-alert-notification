@@ -20,6 +20,7 @@ class BCEmergencyAlert extends HTMLElement {
         this.appendChild(template);
 
         // Define template attributes
+        this._currentAlertId = null; // tracked to allow scroll to top on change
         this._container        = this.querySelector('#ravealertheader');
         this._icon             = this.querySelector('#ravealerticon');
         this._messageContainer = this.querySelector('#ravealertmessage');
@@ -33,6 +34,7 @@ class BCEmergencyAlert extends HTMLElement {
 
         // Set up default options for the show method
         const {
+            alertId         = null,
             alertClass      = '',
             messageHeading  = '',
             messageText     = '',
@@ -40,6 +42,10 @@ class BCEmergencyAlert extends HTMLElement {
             contentOverride = false,
             iconOverride    = false
         } = options;
+
+        // Check if this is a new or different alert
+        const alertChanged = this._currentAlertId !== alertId;
+        this._currentAlertId = alertId;
 
         // Sanitize and add classes to the container
         const safeClasses = this._sanitizeClasses( alertClass );
@@ -81,18 +87,23 @@ class BCEmergencyAlert extends HTMLElement {
         this.removeAttribute('hidden');
 
         // Scroll into view after 100ms (delay prevents failure)
-        setTimeout(() => {
-            this.scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'start' 
-            });
-        }, 100 );
+        if ( alertChanged ) {
+            setTimeout(() => {
+                this.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }, 100 );
+        }
     }
 
     // Public API for hiding the alert
     hide() {
         if ( ! this._container ) return;
         if ( ! this.isVisible() ) return;
+
+        // Reset Alert ID
+        this._currentAlertId = null;
 
         // Hide the alert
         this.setAttribute('hidden', '');

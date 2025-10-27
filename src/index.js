@@ -60,6 +60,7 @@ async function checkForBCAlert( alertElement ) {
             } else {
                 // Build and show alert
                 alertElement.show({
+                    alertId: alertInfo.identifier,
                     alertClass: alertInfo.message.class,
                     messageHeading: alertInfo.message.event,
                     messageText: alertInfo.message.headline,
