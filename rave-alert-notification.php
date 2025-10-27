@@ -34,6 +34,38 @@ if ( is_main_site() && 'true' === $bc_rave_network_settings['ravealert_do_archiv
 	require_once('post-types/bc-alert.php');
 }
 
+/**
+ * Insert Alert Web Component Template into Page Header
+ */
+add_action( 'wp_head', function() {
+	?>
+	<template id="bc-alert-template">
+		<div id="ravealertheader" class="container">
+			<div class="row">
+				<div id="ravealerticon" class="col-sm-2">
+					<span class="glyphicon glyphicon-warning-sign fa-solid fa-triangle-exclamation fa-5x" aria-hidden="true"></span>
+				</div>
+				<div class="col-sm-10">
+					<div id="ravealertmessage" class="bc-rave-alert-message">
+						<h2 id="ravealertevent" class="bc-rave-alert-heading"></h2>
+						<p id="ravealertcontent" class="bc-rave-alert-content"></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</template>
+	<?php
+} );
+
+/**
+ * Add Alert Component to the Top of the Body
+ */
+add_action( 'wp_body_open', function() {
+	?>
+	<bc-emergency-alert id="bc-emergency-alert" hidden></bc-emergency-alert>
+	<?php
+} );
+
 /*
  * Enqueue Ajax scripts
  * Script calls Ajax after x amount of miliseconds to keep page updating every x miliseconds
@@ -56,7 +88,7 @@ function bc_rave_enqueue_ajax() {
                                                     open_message_class: "' . $open_message_class . '",
                                                     is_homepage: "' . $is_homepage . '"
                                                 };';
-    wp_enqueue_script( 'rave-alert-ajax', plugin_dir_url( __FILE__ ) . 'js/rave-alert-ajax.js#asyncdeferload', array('jquery'), '1.10.0', true );
+    wp_enqueue_script( 'rave-alert-ajax', plugin_dir_url( __FILE__ ) . 'dist/index.js', array(), '1.11.0', array( 'strategy' => 'defer' ) );
     wp_add_inline_script( 'rave-alert-ajax', $rest_variables, 'before' );
 
 }

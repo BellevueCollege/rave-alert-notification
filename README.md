@@ -15,7 +15,6 @@ Load on the RAVE CAP feed is reduced by having the plugin load the feed server-s
 
 API Endpoints also include a required time parameter (I suggest this is a four-digit number representing UTC hours and minutes). This allows a server-side cache (or something like Cloudflare) to cache the response for the vast majority of requests. Ideally your server will only have to regenerate this once every minute, even with a large number of users.
 
-
 ## Configuration
 
 Settings page allows to set following variables:
@@ -28,6 +27,13 @@ Settings page allows to set following variables:
 
 This plugin is designed to be Network Activated on a WordPress multisite. It also expects FontAwesome or Glyphicons to be available.
 
+## Developer Setup
+
+1. Clone this repository
+2. From the repo directory run `npm install` to install @wordpress/scrips
+3. Run one of the following commands to build plugin JavaScript:
+  - `npm run build` - build for production
+  - `npm run start` - watch files and build as things change
 
 ## Installation
 
