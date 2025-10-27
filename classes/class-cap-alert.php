@@ -47,9 +47,9 @@ class CAP_Alert {
 				$alert["severity"]    = $severity;
 
 				if ( 'minor' === strtolower( $severity ) ) {
-					$alert["class"]   = "alert alert-info";
+					$alert["class"]   = "bg-warning text-bg-warning";
 				} else {
-					$alert["class"]   = "alert alert-danger";
+					$alert["class"]   = "text-white bg-danger text-bg-danger";
 				}
 				return $alert;
 			}

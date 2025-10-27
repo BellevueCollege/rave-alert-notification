@@ -43,7 +43,6 @@ class BCEmergencyAlert extends HTMLElement {
 
         // Sanitize and add classes to the container
         const safeClasses = this._sanitizeClasses( alertClass );
-        this._container.className = 'container';
         if ( safeClasses.length ) {
             this._container.classList.add( ...safeClasses );
         }

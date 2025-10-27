@@ -40,15 +40,17 @@ if ( is_main_site() && 'true' === $bc_rave_network_settings['ravealert_do_archiv
 add_action( 'wp_head', function() {
 	?>
 	<template id="bc-alert-template">
-		<div id="ravealertheader" class="container">
-			<div class="row">
-				<div id="ravealerticon" class="col-sm-2">
-					<span class="glyphicon glyphicon-warning-sign fa-solid fa-triangle-exclamation fa-5x" aria-hidden="true"></span>
-				</div>
-				<div class="col-sm-10">
-					<div id="ravealertmessage" class="bc-rave-alert-message">
-						<h2 id="ravealertevent" class="bc-rave-alert-heading"></h2>
-						<p id="ravealertcontent" class="bc-rave-alert-content"></p>
+		<div id="ravealertheader">
+			<div class="container py-3">
+				<div class="row">
+					<div id="ravealerticon" class="col-sm-2">
+						<span class="glyphicon glyphicon-warning-sign fa-solid fa-triangle-exclamation fa-5x" aria-hidden="true"></span>
+					</div>
+					<div class="col-sm-10">
+						<div id="ravealertmessage" class="bc-rave-alert-message">
+							<h2 id="ravealertevent" class="bc-rave-alert-heading"></h2>
+							<p id="ravealertcontent" class="bc-rave-alert-content"></p>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -80,7 +82,8 @@ function bc_rave_enqueue_ajax() {
     //checks if current site is the homepage
     $current_site = get_site_url() . '/';
     $homepage_site = network_home_url();
-    $is_homepage = ( 'home' === get_post_type() || ( is_main_site() && is_front_page() ) ? true : false );
+    $is_homepage = ( is_main_site() && ( is_front_page() || 'home' === get_post_type() ) ? true : false );
+
     $rest_variables = 'var rave_alert_settings = {
                                                     rest_url: "' . $rest_url . '", 
                                                     more_info_url: "' . bc_rave_return_more_info_link() . '",
