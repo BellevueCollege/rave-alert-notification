@@ -39,12 +39,11 @@ if ( is_main_site() && 'true' === $bc_rave_network_settings['ravealert_do_archiv
  * Script calls Ajax after x amount of miliseconds to keep page updating every x miliseconds
  */
 function bc_rave_enqueue_ajax() {
-    $rest_url           = network_site_url( '/wp-json/rave/v' . Rave_Alert_API::$rest_version ) . '/';
-
+    $rest_url           = esc_url( network_site_url( '/wp-json/rave/v' . Rave_Alert_API::$rest_version ) . '/' );
     //Get college open message: returns an array of description and class
     $open_message_data  = Open_Message::get_message();
-    $open_message_desc  = isset( $open_message_data['description'] ) ? addslashes(stripslashes($open_message_data['description']))  : null;
-    $open_message_class = isset( $open_message_data['class'] ) ? addslashes(stripslashes($open_message_data['class'])) : null;
+    $open_message_desc  = isset( $open_message_data['description'] ) ?  addslashes( stripslashes( wp_kses_post( $open_message_data['description'] ) ) )  : null;
+    $open_message_class = isset( $open_message_data['class'] ) ?  addslashes( stripslashes( esc_attr( $open_message_data['class'] ) ) ) : null;
 
     //checks if current site is the homepage
     $current_site = get_site_url() . '/';
