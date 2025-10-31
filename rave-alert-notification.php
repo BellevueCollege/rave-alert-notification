@@ -42,7 +42,7 @@ add_action( 'wp_head', function() {
 	<template id="bc-alert-template">
 		<div id="ravealertheader">
 			<div class="container py-3">
-				<div class="row">
+				<div class="row" id="ravealertemergencyrow" hidden>
 					<div id="ravealerticon" class="col-sm-2">
 						<span class="glyphicon glyphicon-warning-sign fa-solid fa-triangle-exclamation fa-5x" aria-hidden="true"></span>
 					</div>
@@ -52,6 +52,8 @@ add_action( 'wp_head', function() {
 							<p id="ravealertcontent" class="bc-rave-alert-content"></p>
 						</div>
 					</div>
+				</div>
+				<div class="row" id="ravealertmanualrow" hidden>
 				</div>
 			</div>
 		</div>
@@ -91,7 +93,7 @@ function bc_rave_enqueue_ajax() {
                                                     open_message_class: "' . $open_message_class . '",
                                                     is_homepage: "' . $is_homepage . '"
                                                 };';
-    wp_enqueue_script( 'rave-alert-ajax', plugin_dir_url( __FILE__ ) . 'dist/index.js', array(), '1.11.0', array( 'strategy' => 'defer' ) );
+    wp_enqueue_script( 'rave-alert-ajax', plugin_dir_url( __FILE__ ) . 'dist/index.js', array(), '1.11.0--dev1', array( 'strategy' => 'defer' ) );
     wp_add_inline_script( 'rave-alert-ajax', $rest_variables, 'before' );
 
 }

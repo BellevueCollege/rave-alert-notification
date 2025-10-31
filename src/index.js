@@ -23,7 +23,7 @@ function displayManualBCAlertOrHide( alertElement ) {
         // Show manual alert if present
         alertElement.show({
             alertClass: openMessageClass,
-            contentOverride: openMessageDesc // MUST be sanitized via PHP
+            manualAlert: openMessageDesc // MUST be sanitized via PHP
         });
         return true;
     }

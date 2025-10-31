@@ -20,12 +20,14 @@ class BCEmergencyAlert extends HTMLElement {
         this.appendChild(template);
 
         // Define template attributes
-        this._currentAlertId = null; // tracked to allow scroll to top on change
-        this._container        = this.querySelector('#ravealertheader');
-        this._icon             = this.querySelector('#ravealerticon');
-        this._messageContainer = this.querySelector('#ravealertmessage');
-        this._messageHeading   = this.querySelector('#ravealertevent');
-        this._messageText      = this.querySelector('#ravealertcontent');
+        this._currentAlertId    = null; // tracked to allow scroll to top on change
+        this._container         = this.querySelector('#ravealertheader');
+        this._emergencyAlertRow = this.querySelector('#ravealertemergencyrow');
+        this._manualAlertRow    = this.querySelector('#ravealertmanualrow');
+        this._icon              = this.querySelector('#ravealerticon');
+        this._messageContainer  = this.querySelector('#ravealertmessage');
+        this._messageHeading    = this.querySelector('#ravealertevent');
+        this._messageText       = this.querySelector('#ravealertcontent');
     }
 
     // Public API for Showing and Updating the Alert
@@ -39,7 +41,7 @@ class BCEmergencyAlert extends HTMLElement {
             messageHeading  = '',
             messageText     = '',
             messageInfoURL  = '',
-            contentOverride = false,
+            manualAlert     = false,
             iconOverride    = false
         } = options;
 
@@ -48,15 +50,18 @@ class BCEmergencyAlert extends HTMLElement {
         this._currentAlertId = alertId;
 
         // Sanitize and add classes to the container
-        const safeClasses = this._sanitizeClasses( alertClass );
-        if ( safeClasses.length ) {
-            this._container.classList.add( ...safeClasses );
+        if ( alertChanged ) {
+            // Remove classes
+            this._container.className = ''; 
+            // Add classes
+            const safeClasses = this._sanitizeClasses( alertClass );
+            if ( safeClasses.length ) {
+                this._container.classList.add( ...safeClasses );
+            }
         }
 
-        // Set entire content when override is present (must be sanitized in PHP)
-        if ( contentOverride ) {
-            this._messageContainer.innerHTML = contentOverride;
-        } else {
+        // Process Alert if there is an Alert ID
+        if ( alertId ) {
 
             // Set icon when icon override is present (must be sanitized in PHP)
             if ( iconOverride ) {
@@ -76,6 +81,16 @@ class BCEmergencyAlert extends HTMLElement {
                 link.textContent = 'More Information';
                 this._messageText.appendChild(link);
             }
+
+            // Show the emergency alert and hide the manual alert
+            this._emergencyAlertRow.removeAttribute('hidden');
+            this._manualAlertRow.setAttribute('hidden', '');
+        } else if ( manualAlert && ! alertId ) {
+            this._manualAlertRow.innerHTML = manualAlert;
+
+            // Show the manual alert and hide the emergency alert
+            this._emergencyAlertRow.setAttribute('hidden', '');
+            this._manualAlertRow.removeAttribute('hidden');
         }
 
         // Set Accessibility Attributes
