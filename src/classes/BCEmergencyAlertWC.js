@@ -50,14 +50,14 @@ class BCEmergencyAlert extends HTMLElement {
         this._currentAlertId = alertId;
 
         // Sanitize and add classes to the container
+        // Remove classes first if alert has changed
         if ( alertChanged ) {
-            // Remove classes
             this._container.className = ''; 
-            // Add classes
-            const safeClasses = this._sanitizeClasses( alertClass );
-            if ( safeClasses.length ) {
-                this._container.classList.add( ...safeClasses );
-            }
+        }
+        // Add classes
+        const safeClasses = this._sanitizeClasses( alertClass );
+        if ( safeClasses.length ) {
+            this._container.classList.add( ...safeClasses );
         }
 
         // Process Alert if there is an Alert ID
