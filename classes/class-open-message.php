@@ -10,7 +10,7 @@ class Open_Message {
 		if ( $high_alert === 'true' ) {
 			if ( $open_message ) {
 				$message["description"] = $open_message;
-				$message["class"] = "alert alert-success";
+				$message["class"] = "bg-warning text-bg-warning";
 			} else {
 				$message["description"] = "";
 				$message["class"] = "";

@@ -34,22 +34,57 @@ if ( is_main_site() && 'true' === $bc_rave_network_settings['ravealert_do_archiv
 	require_once('post-types/bc-alert.php');
 }
 
+/**
+ * Insert Alert Web Component Template into Page Header
+ */
+add_action( 'wp_head', function() {
+	?>
+	<template id="bc-alert-template">
+		<div id="ravealertheader">
+			<div class="container py-3">
+				<div class="row" id="ravealertemergencyrow" hidden>
+					<div id="ravealerticon" class="col-sm-2">
+						<span class="glyphicon glyphicon-warning-sign fa-solid fa-triangle-exclamation fa-5x" aria-hidden="true"></span>
+					</div>
+					<div class="col-sm-10">
+						<div id="ravealertmessage" class="bc-rave-alert-message">
+							<h2 id="ravealertevent" class="bc-rave-alert-heading"></h2>
+							<p id="ravealertcontent" class="bc-rave-alert-content"></p>
+						</div>
+					</div>
+				</div>
+				<div class="row" id="ravealertmanualrow" hidden>
+				</div>
+			</div>
+		</div>
+	</template>
+	<?php
+} );
+
+/**
+ * Add Alert Component to the Top of the Body
+ */
+add_action( 'wp_body_open', function() {
+	?>
+	<bc-emergency-alert id="bc-emergency-alert" hidden></bc-emergency-alert>
+	<?php
+} );
+
 /*
  * Enqueue Ajax scripts
  * Script calls Ajax after x amount of miliseconds to keep page updating every x miliseconds
  */
 function bc_rave_enqueue_ajax() {
-    $rest_url           = network_site_url( '/wp-json/rave/v' . Rave_Alert_API::$rest_version ) . '/';
-
+    $rest_url           = esc_url( network_site_url( '/wp-json/rave/v' . Rave_Alert_API::$rest_version ) . '/' );
     //Get college open message: returns an array of description and class
     $open_message_data  = Open_Message::get_message();
-    $open_message_desc  = isset( $open_message_data['description'] ) ? addslashes(stripslashes($open_message_data['description']))  : null;
-    $open_message_class = isset( $open_message_data['class'] ) ? addslashes(stripslashes($open_message_data['class'])) : null;
+    $open_message_desc  = isset( $open_message_data['description'] ) ?  addslashes( stripslashes( wp_kses_post( $open_message_data['description'] ) ) )  : null;
+    $open_message_class = isset( $open_message_data['class'] ) ?  addslashes( stripslashes( esc_attr( $open_message_data['class'] ) ) ) : null;
 
     //checks if current site is the homepage
     $current_site = get_site_url() . '/';
     $homepage_site = network_home_url();
-    $is_homepage = ( is_main_site() && is_front_page() ? true : false );
+    $is_homepage = ( is_main_site() && ( is_front_page() || 'home' === get_post_type() ) ? true : false );
 
     $rest_variables = 'var rave_alert_settings = {
                                                     rest_url: "' . $rest_url . '", 
@@ -58,7 +93,7 @@ function bc_rave_enqueue_ajax() {
                                                     open_message_class: "' . $open_message_class . '",
                                                     is_homepage: "' . $is_homepage . '"
                                                 };';
-    wp_enqueue_script( 'rave-alert-ajax', plugin_dir_url( __FILE__ ) . 'js/rave-alert-ajax.js#asyncdeferload', array('jquery'), '1.10.0', true );
+    wp_enqueue_script( 'rave-alert-ajax', plugin_dir_url( __FILE__ ) . 'dist/index.js', array(), '1.11.0--dev1', array( 'strategy' => 'defer' ) );
     wp_add_inline_script( 'rave-alert-ajax', $rest_variables, 'before' );
 
 }

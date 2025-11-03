@@ -40,3 +40,7 @@ dwsync.xml
 
 # Alerts
 alert.xml
+
+node_modules/
+vendor/
+dist/
