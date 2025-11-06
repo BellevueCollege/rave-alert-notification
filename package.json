@@ -1,0 +1,24 @@
+{
+  "name": "rave-alert-notification",
+  "version": "1.11.0",
+  "description": "WordPress plugin to facilitate emergency alerts across the BC website",
+  "homepage": "https://github.com/BellevueCollege/rave-alert-notification#readme",
+  "bugs": {
+    "url": "https://github.com/BellevueCollege/rave-alert-notification/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BellevueCollege/rave-alert-notification.git"
+  },
+  "license": "GPL-3.0-or-later",
+  "author": "Bellevue College IT Services Integration Team",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "wp-scripts start --webpack-src-dir=src --output-path=dist",
+    "build": "wp-scripts build --webpack-src-dir=src --output-path=dist"
+  },
+  "devDependencies": {
+    "@wordpress/scripts": "^30.25.0"
+  }
+}

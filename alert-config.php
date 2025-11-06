@@ -71,7 +71,7 @@ function ravealert_network_settings() {
 			<?php
 			$bc_rave_network_settings = get_site_option( 'ravealert_network_settings' );
 			
-			$high_alert = $bc_rave_network_settings['high_alert'];
+			$high_alert = $bc_rave_network_settings['high_alert'] ?? false;
 
 			if( $high_alert == "true" ) {
 				$trueSelected = "checked";
@@ -79,20 +79,20 @@ function ravealert_network_settings() {
 				$falseSelected = "checked";
 			}
 
-			$ravealert_college_openmessage = stripslashes( $bc_rave_network_settings['ravealert_college_openmessage'] );
+			$ravealert_college_openmessage = stripslashes( $bc_rave_network_settings['ravealert_college_openmessage'] ?? '' );
 
-			$ravealert_xml_feedurl = $bc_rave_network_settings['ravealert_xml_feedurl'];
+			$ravealert_xml_feedurl = $bc_rave_network_settings['ravealert_xml_feedurl'] ?? '';
 
-			$teams_error_webhook_url = $bc_rave_network_settings['teams_error_webhook_url'];
+			$teams_error_webhook_url = $bc_rave_network_settings['teams_error_webhook_url'] ?? '';
 			
-			$archive_alert = $bc_rave_network_settings['ravealert_do_archive'];
+			$archive_alert = $bc_rave_network_settings['ravealert_do_archive'] ?? false;
 			if( $archive_alert == "true" ) {
 				$true_archive_selected = "checked";
 			} else {
 				$false_archive_selected = "checked";
 			}
 
-			$archive_type = $bc_rave_network_settings['ravealert_archive_type'];
+			$archive_type = $bc_rave_network_settings['ravealert_archive_type'] ?? 'post';
 			if ( $archive_type === "post" ) {
 				$ravealert_archive_type_post = "checked";
 			} else if ( $archive_type === "cpt" ) {
