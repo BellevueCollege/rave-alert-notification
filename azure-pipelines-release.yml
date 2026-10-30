@@ -1,0 +1,31 @@
+trigger: none
+pr: none
+
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      name: BellevueCollege/bc-wordpress-devops-templates
+      endpoint: github-service-connection
+
+  pipelines:
+    - pipeline: ci
+      source: rave-alert-notification
+      trigger:
+        branches:
+          include:
+            - 'refs/tags/v*'
+
+extends:
+  template: templates/release/plugin-release.yml@templates
+  parameters:
+
+    pluginName: 'rave-alert-notification'
+    githubRepo: rave-alert-notification
+
+    productionEnvironments:
+      - name: KinstaProd
+        displayName: 'Kinsta: Production'
+        environment: kinsta-wwwbellevuecollegeedu
+        sshServiceConnection: wwwbellevuecollegeedu
+        variableGroup: kinsta-wwwbellevuecollegeedu
